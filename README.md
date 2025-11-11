@@ -1,4 +1,4 @@
-# seaotterms.com-nuxt
+# seaotterms-web-nuxt3
 
 - 2025/08/16: 更新到v1.2.0版本，開始補建立Release，之後所有詳細資料移到Release說明
 - 2025/08/13: v1.0.0版本(第一次打版號),為第一個完整的正式版
