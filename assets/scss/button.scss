@@ -128,7 +128,7 @@
 }
 
 /* button-management */
-.button-management {
+.v-btn.button-management {
   background: #ff4742;
   border: 1px solid #ff4742;
   border-radius: 6px;
@@ -152,13 +152,13 @@
   touch-action: manipulation;
   vertical-align: middle;
 }
-.button-management:hover,
-.button-management:active {
+.v-btn.button-management:hover,
+.v-btn.button-management:active {
   background-color: initial;
   background-position: 0 0;
   color: #ff4742;
 }
-.button-management:active {
+.v-btn.button-management:active {
   opacity: 0.5;
 }
 
@@ -198,7 +198,7 @@
 }
 
 /* button-simple */
-.button-simple {
+.v-btn.button-simple {
   align-items: center;
   appearance: none;
   background-color: #fcfcfd;
@@ -234,7 +234,7 @@
   font-size: 18px;
 }
 
-.button-simple:focus {
+.v-btn.button-simple:focus {
   background-color: #fcfcfd;
   box-shadow:
     #d6d6e7 0 0 0 1.5px inset,
@@ -243,7 +243,7 @@
     #d6d6e7 0 -3px 0 inset;
 }
 
-.button-simple:hover {
+.v-btn.button-simple:hover {
   background-color: #fcfcfd;
   box-shadow:
     rgba(45, 35, 66, 0.4) 0 4px 8px,
@@ -252,12 +252,12 @@
   transform: translateY(-2px);
 }
 
-.button-simple:active {
+.v-btn.button-simple:active {
   box-shadow: #d6d6e7 0 3px 7px inset;
   transform: translateY(2px);
 }
 
-.button-simple:disabled {
+.v-btn.button-simple:disabled {
   background-color: #ccc;
   pointer-events: none;
   cursor: not-allowed;

@@ -27,9 +27,7 @@ const form = ref<UserUpdateRequest>({
 });
 const allUserData = ref<UserQueryResponse[]>([]);
 
-onMounted(() => {
-  initMaterialModal();
-});
+const dialog = ref(false);
 
 const changeStatus = async () => {
   try {
@@ -102,14 +100,19 @@ const changeManagementStatus = async (userId: number) => {
           身分:
           <span v-if="form.management">管理員</span>
           <span v-else>一般用戶</span>
-          <button
+
+          <v-btn
             v-if="form.management"
-            data-target="modal1"
-            class="modal-trigger button-management"
-            @click="changeStatus()"
+            class="button-management"
+            @click="
+              () => {
+                changeStatus();
+                dialog = true;
+              }
+            "
           >
             變更使用者權限
-          </button>
+          </v-btn>
         </div>
         <div class="col s12 input-field">
           <i class="material-icons prefix">sports_esports</i>
@@ -139,40 +142,38 @@ const changeManagementStatus = async (userId: number) => {
     </div>
   </div>
 
-  <!-- Modal Structure -->
-  <div id="modal1" class="modal modal-fixed-footer">
-    <div class="modal-content">
-      <h4>使用者管理</h4>
-      <div class="col s12 user-header">
-        <div class="col s6">使用者名稱</div>
-        <div class="col s6">權限</div>
-      </div>
-      <div class="col s12 user-conent floatup-div" v-for="user in allUserData" :key="user.id">
-        <div class="col s6">{{ user.username }}</div>
-        <div class="col s6">
-          <button
-            class="button-simple"
-            v-if="user.management"
-            @click="changeManagementStatus(user.id)"
-            :disabled="user.username === 'root'"
-          >
-            管理員
-          </button>
-          <button
-            class="button-simple"
-            v-else
-            @click="changeManagementStatus(user.id)"
-            :disabled="user.username === 'root'"
-          >
-            使用者
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="modal-close waves-effect waves-green btn-flat">關閉</button>
-    </div>
-  </div>
+  <!-- Dialog -->
+  <v-dialog v-model="dialog" max-width="800px">
+    <v-card class="modal">
+      <v-card-title class="text-h4">使用者管理</v-card-title>
+
+      <v-card-text>
+        <v-row class="mb-2 text-h6">
+          <v-col cols="6">使用者名稱</v-col>
+          <v-col cols="6">權限</v-col>
+        </v-row>
+
+        <v-row v-for="user in allUserData" :key="user.id" class="user-conent floatup-div mb-2">
+          <v-col cols="6 text-h6 font-weight-bold">{{ user.username }}</v-col>
+          <v-col cols="6">
+            <v-btn
+              class="button-simple"
+              variant="outlined"
+              @click="changeManagementStatus(user.id)"
+              :disabled="user.username === 'root'"
+            >
+              {{ user.management ? "管理員" : "使用者" }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text @click="dialog = false">關閉</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style lang="scss" scoped>
@@ -190,48 +191,10 @@ const changeManagementStatus = async (userId: number) => {
   }
 }
 
-.modal-content {
-  padding: 30px;
-  > div {
-    margin-top: 10px;
-    padding: 10px;
-  }
-}
-
-.modal,
-.modal-footer {
+.modal {
   text-align: center;
   background-color: rgb(var(--v-theme-background));
-}
-
-.modal-close {
-  width: 100%;
-}
-
-.user-header {
-  text-align: center;
-  font-size: x-large;
-  font-weight: bold;
-  max-height: 80px;
-  height: 80px;
-}
-.user-conent {
-  text-align: center;
-  max-height: 100%;
-  border: 2px solid rgb(var(--v-theme-surface));
-  border-radius: 20px;
-  > div {
-    font-size: x-large;
-    margin-left: 5px;
-    padding: 0px;
-    max-height: 100%;
-    > button {
-      padding: 0px !important;
-      height: 30px;
-      max-height: 30px;
-      font-size: 20px;
-    }
-  }
+  min-width: 800px;
 }
 
 .headShot {
@@ -249,6 +212,11 @@ const changeManagementStatus = async (userId: number) => {
     height: 100%;
     object-fit: cover;
   }
+}
+
+.user-conent {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
 }
 
 span {
