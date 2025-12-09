@@ -117,7 +117,7 @@ onMounted(() => {
 }
 
 .sub-block {
-  border: 2px solid var(--color-border);
+  border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 20px;
   font-size: 25px !important;
   max-height: 100px;

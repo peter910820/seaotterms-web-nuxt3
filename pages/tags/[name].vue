@@ -56,7 +56,7 @@ const link = (articleID: number) => {
     div {
       font-size: 20px;
       padding: 10px;
-      border: 2px solid var(--color-border);
+      border: 2px solid rgb(var(--v-theme-surface));
       border-radius: 50px;
       white-space: nowrap;
       overflow: hidden;

@@ -165,7 +165,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .nav-wrapper {
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
 }
 
 .brand-logo {
@@ -182,7 +182,7 @@ a {
 
 .dropdown-content {
   width: 220px !important;
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
   border-radius: 10px;
 }
 </style>

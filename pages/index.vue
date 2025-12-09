@@ -94,11 +94,11 @@ onMounted(() => {
 .banner {
   min-height: 250px;
   max-height: 250px;
-  border: 2px solid var(--color-border);
+  border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 100px;
   margin-bottom: 20px;
   text-align: center;
-  background-image: var(--image-banner);
+  background-image: var(--v-banner-image);
   background-size: cover;
   background-position: 50% 20%;
   position: relative;
@@ -125,7 +125,7 @@ onMounted(() => {
 }
 
 .articles {
-  border: 2px solid var(--color-border);
+  border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 20px;
 }
 .title {

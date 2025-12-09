@@ -201,7 +201,7 @@ const changeManagementStatus = async (userId: number) => {
 .modal,
 .modal-footer {
   text-align: center;
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
 }
 
 .modal-close {
@@ -218,7 +218,7 @@ const changeManagementStatus = async (userId: number) => {
 .user-conent {
   text-align: center;
   max-height: 100%;
-  border: 2px solid var(--color-border);
+  border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 20px;
   > div {
     font-size: x-large;

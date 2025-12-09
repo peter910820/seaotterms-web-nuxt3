@@ -13,7 +13,7 @@
 
 <style lang="scss" scoped>
 footer {
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
 }
 .font-color {
   color: #444444;

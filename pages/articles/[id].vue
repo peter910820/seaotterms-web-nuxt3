@@ -118,7 +118,7 @@ const link = (tagName: string) => {
     min-width: 100%;
     min-height: 500px;
     border: 2px solid transparent;
-    box-shadow: inset 0 0 10px 1px var(--color-border);
+    box-shadow: inset 0 0 10px 1px rgb(var(--v-theme-surface));
     border-radius: 20px;
   }
 }

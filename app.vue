@@ -42,7 +42,7 @@ body {
   min-height: 100vh;
   min-width: 768px;
 
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
   background-size: 400% 400%;
 }
 
@@ -54,7 +54,7 @@ body {
   padding-top: 20px;
   margin-top: 10px;
   cursor: default !important;
-  border: 2px solid var(--color-border);
+  border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 20px;
   display: inline-block;
   word-wrap: break-word;
@@ -73,7 +73,7 @@ body {
 }
 
 .browser-default {
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
   font-size: 15px;
   font-family: "Cubic_11_1.100_R";
 }

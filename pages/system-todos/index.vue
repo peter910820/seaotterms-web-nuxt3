@@ -292,7 +292,7 @@ const deleteTodo = async (id: number) => {
   width: 75vw;
   overflow-y: auto;
   overflow-x: hidden;
-  background: var(--color-background);
+  background: rgb(var(--v-theme-background));
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
