@@ -46,8 +46,6 @@ let sortedFlattenedRecordList = flattenedRecordList.sort((a, b) => {
   return bTime - aTime; // DESC 排序
 });
 
-sortedFlattenedRecordList = sortedFlattenedRecordList.filter((item) => item.hasPlayed);
-
 total.value = sortedFlattenedRecordList.length;
 
 const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
