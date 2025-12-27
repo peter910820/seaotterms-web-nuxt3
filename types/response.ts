@@ -146,10 +146,7 @@ interface GameErogs {
 export interface UserGameErogs {
   userId: string;
   gameErogsId: number;
-  hasPlayed: boolean;
-  inWish: boolean;
   completedAt: string | null;
   createdAt: string;
-  updatedAt: string;
   gameErogs: GameErogs;
 }
