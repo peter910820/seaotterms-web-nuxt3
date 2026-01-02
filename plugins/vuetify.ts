@@ -28,6 +28,15 @@ export default defineNuxtPlugin((app) => {
           },
           variables: {
             "banner-image": 'url("/background.png")',
+            // Light accent colors - can be used for card backgrounds
+            "card-color-1": "#FFF9E6", // Light beige
+            "card-color-2": "#F0F8FF", // Light sky blue
+            "card-color-3": "#F5F0FF", // Light lavender
+            "card-color-4": "#F0FFF4", // Light mint green
+            "card-color-5": "#FFF5F5", // Light pink
+            "card-color-6": "#FFF8E1", // Light lemon yellow
+            "card-color-7": "#E8F4F8", // Light cyan
+            "card-color-8": "#FFF0F5", // Light rose
           },
         },
         // dark: {

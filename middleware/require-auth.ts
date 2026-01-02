@@ -5,6 +5,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const { user } = storeToRefs(userStore);
   if (user.value.id === 0) {
     alert("使用者未登入");
-    return navigateTo("/login");
+    const { openLoginModal } = useLoginModal();
+    openLoginModal();
+    return navigateTo("/");
   }
 });

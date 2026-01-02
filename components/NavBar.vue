@@ -1,10 +1,24 @@
 <script setup lang="ts">
 import { initMaterialSidenav, initMaterialDropdown } from "@/composables/useMaterial";
+import { useLoginModal } from "@/stores/useLoginModal";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+const { showLoginModal, openLoginModal } = useLoginModal();
 
 const userData = computed(() => user.value);
+
+const handleLogout = () => {
+  const session = useCookie("blog-userinfo-session", {
+    path: "/",
+    maxAge: 0,
+    sameSite: "none",
+    domain: import.meta.env.VITE_ROOT_DOMAIN,
+    secure: true,
+  });
+  session.value = null;
+  userStore.reset();
+};
 
 onMounted(() => {
   initMaterialSidenav();
@@ -110,14 +124,18 @@ onMounted(() => {
           > -->
         </li>
         <li>
-          <router-link v-if="userData.username === '' || userData.username === undefined" to="/login">
+          <a
+            v-if="userData.username === '' || userData.username === undefined"
+            href="#"
+            @click.prevent="openLoginModal"
+          >
             登入
             <i class="material-icons left">login</i>
-          </router-link>
-          <router-link v-else to="/login">
+          </a>
+          <a v-else href="#" @click.prevent="handleLogout">
             登出
             <i class="material-icons left">logout</i>
-          </router-link>
+          </a>
         </li>
       </ul>
     </div>
@@ -157,10 +175,14 @@ onMounted(() => {
       </router-link>
     </li>
     <li>
-      <router-link v-if="userData.username === '' || userData.username === undefined" to="/login">登入</router-link>
-      <router-link v-else to="/login">登出</router-link>
+      <a v-if="userData.username === '' || userData.username === undefined" href="#" @click.prevent="openLoginModal"
+        >登入</a
+      >
+      <a v-else href="#" @click.prevent="handleLogout">登出</a>
     </li>
   </ul>
+
+  <LoginModal v-model="showLoginModal" />
 </template>
 
 <style lang="scss" scoped>

@@ -11,7 +11,8 @@ export const errorHandler = (error: any) => {
     switch (fetchError.status) {
       case 401:
         alert("階段性登入已過期，請重新登入");
-        router.push("/login");
+        const { openLoginModal } = useLoginModal();
+        openLoginModal();
         break;
       case 403:
         alert("使用者沒有使用該資源的權限");
