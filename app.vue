@@ -17,23 +17,24 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="loader">
-    <div class="loader"></div>
-  </div>
-  <div class="sticky-navbar">
-    <NavBar />
-  </div>
-  <div class="row">
-    <div class="col l9 m12 s12">
-      <NuxtPage />
+  <v-app>
+    <div id="loader">
+      <div class="loader"></div>
     </div>
-    <div class="col l3 m12 s12 sticky-profile">
-      <ClientOnly>
-        <MyProfile />
-      </ClientOnly>
+    <div class="sticky-navbar">
+      <NavBar />
     </div>
-  </div>
-  <MainFooter />
+    <v-container fluid class="page-container">
+      <v-row class="page-row">
+        <v-col cols="1"></v-col>
+        <v-col cols="10" class="page-content">
+          <NuxtPage />
+        </v-col>
+        <v-col cols="1"></v-col>
+      </v-row>
+    </v-container>
+    <!-- <MainFooter /> -->
+  </v-app>
 </template>
 
 <style lang="scss">
@@ -53,7 +54,7 @@ body {
 .sub-block {
   padding-top: 20px;
   margin-top: 10px;
-  cursor: default !important;
+  cursor: default;
   border: 2px solid rgb(var(--v-theme-surface));
   border-radius: 20px;
   display: inline-block;
@@ -65,11 +66,6 @@ body {
   position: sticky;
   top: 0px;
   z-index: 10;
-}
-
-.sticky-profile {
-  position: sticky;
-  top: 70px;
 }
 
 .browser-default {
@@ -100,5 +96,17 @@ body {
 
 .loading-hidden {
   display: none !important;
+}
+
+.page-container {
+  min-height: 100vh;
+}
+
+.page-row {
+  min-height: 100%;
+}
+
+.page-content {
+  min-height: 100vh;
 }
 </style>
