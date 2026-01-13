@@ -109,7 +109,7 @@ onMounted(() => {
 
 .banner-card {
   height: 250px;
-  border: 2px solid rgb(var(--v-theme-surface));
+  border: 2px solid rgb(var(--v-theme-border));
   border-radius: 100px;
   text-align: center;
   background-size: cover;
@@ -140,7 +140,7 @@ onMounted(() => {
 }
 
 .article-card {
-  border: 2px solid rgb(var(--v-theme-surface));
+  border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
   cursor: pointer;
   background-color: var(--v-card-color-1);

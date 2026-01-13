@@ -55,7 +55,7 @@ body {
   padding-top: 20px;
   margin-top: 10px;
   cursor: default;
-  border: 2px solid rgb(var(--v-theme-surface));
+  border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
   display: inline-block;
   word-wrap: break-word;
