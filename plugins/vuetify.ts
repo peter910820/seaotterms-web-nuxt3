@@ -25,6 +25,7 @@ export default defineNuxtPlugin((app) => {
             info: "#1976D2",
             success: "#388E3C",
             warning: "#F57C00",
+            tagColor: "#9C27B0",
           },
           variables: {
             "banner-image": 'url("/background.png")',

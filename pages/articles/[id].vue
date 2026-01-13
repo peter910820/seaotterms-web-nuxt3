@@ -77,15 +77,18 @@ const link = (tagName: string) => {
       {{ article.updatedAt }}
     </div>
     <div class="articleTags">
-      <div
-        class="button-article-tags"
-        role="button"
+      <v-chip
         v-for="(tag, index) in article.tags"
         :key="index"
+        class="ma-1"
+        color="tagColor"
+        variant="flat"
+        size="small"
         @click="link(tag.name)"
+        style="cursor: pointer"
       >
         {{ tag.name }}
-      </div>
+      </v-chip>
     </div>
   </div>
   <div class="row content">
@@ -111,9 +114,18 @@ const link = (tagName: string) => {
     color: rebeccapurple;
   }
 }
+
+.articleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0;
+}
+
 .content {
   min-height: 500px;
   font-family: "jf-openhuninn-2.1";
+  margin-top: 20px;
   > .col {
     min-width: 100%;
     min-height: 500px;
