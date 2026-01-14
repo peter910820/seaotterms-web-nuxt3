@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { initMaterialSidenav, initMaterialDropdown } from "@/composables/useMaterial";
 import { useLoginModal } from "@/stores/useLoginModal";
 
 const userStore = useUserStore();
@@ -7,6 +6,11 @@ const { user } = storeToRefs(userStore);
 const { showLoginModal, openLoginModal } = useLoginModal();
 
 const userData = computed(() => user.value);
+const drawer = ref(false);
+
+const todoMenu = ref(false);
+const galgameMenu = ref(false);
+const otherMenu = ref(false);
 
 const handleLogout = () => {
   const session = useCookie("blog-userinfo-session", {
@@ -18,193 +22,164 @@ const handleLogout = () => {
   });
   session.value = null;
   userStore.reset();
+  drawer.value = false;
 };
-
-onMounted(() => {
-  initMaterialSidenav();
-  initMaterialDropdown();
-});
 </script>
 
 <template>
-  <!-- Todo Dropdown Structure -->
-  <ul id="todo-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/todolists">
-        TodoList
-        <i class="material-icons left">checklist</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/create">
-        建立Todo類別
-        <i class="material-icons left">fact_check</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Galgame Dropdown Structure -->
-  <ul id="galgame-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/self-galgames">
-        Galgame紀錄
-        <i class="material-icons left">casino</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/operation">
-        Galgame文章作業
-        <i class="material-icons left">description</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Other Dropdown Structure -->
-  <ul id="other-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/articles/create">
-        建立文章
-        <i class="material-icons left">edit</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/system/create">
-        建立系統站台
-        <i class="material-icons left">system_update_alt</i>
-      </router-link>
-    </li>
-    <li v-if="userData.id !== undefined && userData.id !== 0">
-      <router-link to="/user-maintain">
-        使用者帳號維護
-        <i class="material-icons left">manage_accounts</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Main Navbar -->
-  <nav>
-    <div class="nav-wrapper">
-      <router-link to="/" class="brand-logo">Home</router-link>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <!-- common -->
-      <ul class="right hide-on-med-and-down">
-        <li>
-          <router-link to="/">
-            首頁
-            <i class="material-icons left">home</i>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/system-todos">
-            系統更新待辦
-            <i class="material-icons left">pending_actions</i>
-          </router-link>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="todo-dropdown">
-            <i class="material-icons left">checklist</i>
-            Todo
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="galgame-dropdown">
-            <i class="material-icons left">casino</i>
-            Galgame
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="other-dropdown">
-            <i class="material-icons left">other_houses</i>
-            其他功能
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <!-- <router-link to="/register"
-            >註冊<i class="material-icons left">how_to_reg</i></router-link
-          > -->
-        </li>
-        <li>
-          <a
-            v-if="userData.username === '' || userData.username === undefined"
-            href="#"
-            @click.prevent="openLoginModal"
-          >
-            登入
-            <i class="material-icons left">login</i>
-          </a>
-          <a v-else href="#" @click.prevent="handleLogout">
-            登出
-            <i class="material-icons left">logout</i>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </nav>
-  <!-- mobile -->
-  <ul class="sidenav" id="mobile-demo">
-    <li>
-      <router-link to="/">首頁</router-link>
-    </li>
-    <li>
-      <router-link to="/system-todos">系統更新待辦</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/new">新Galgame紀錄</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames">Galgame紀錄</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/operation">Galgame文章作業</router-link>
-    </li>
-    <li>
-      <router-link to="/todolists">TodoList</router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/create">建立Todo類別</router-link>
-    </li>
-    <li>
-      <router-link to="/articles/create">建立文章</router-link>
-    </li>
-    <!-- <li>
-      <router-link to="/register">註冊</router-link>
-    </li> -->
-    <li>
-      <router-link v-if="userData.username !== '' && userData.username !== undefined" to="/user-maintain">
-        使用者帳號維護
-      </router-link>
-    </li>
-    <li>
-      <a v-if="userData.username === '' || userData.username === undefined" href="#" @click.prevent="openLoginModal"
-        >登入</a
-      >
-      <a v-else href="#" @click.prevent="handleLogout">登出</a>
-    </li>
-  </ul>
+  <v-app-bar color="background" elevation="2" class="navbar">
+    <v-app-bar-nav-icon @click="drawer = !drawer" class="d-md-none"></v-app-bar-nav-icon>
 
-  <LoginModal v-model="showLoginModal" />
+    <v-app-bar-title>
+      <NuxtLink to="/" class="brand-link">Home</NuxtLink>
+    </v-app-bar-title>
+
+    <v-spacer></v-spacer>
+
+    <!-- Desktop Navigation -->
+    <div class="d-none d-md-flex align-center">
+      <v-btn variant="text" to="/" prepend-icon="mdi-home">首頁</v-btn>
+
+      <v-btn variant="text" to="/system-todos" prepend-icon="mdi-calendar-clock">系統更新待辦</v-btn>
+
+      <v-menu v-model="todoMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-check-circle" append-icon="mdi-menu-down">
+            Todo
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/todolists" prepend-icon="mdi-format-list-checks" title="TodoList"></v-list-item>
+          <v-list-item to="/todo-topics/create" prepend-icon="mdi-tag-plus" title="建立Todo類別"></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu v-model="galgameMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-dice-multiple" append-icon="mdi-menu-down">
+            Galgame
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/self-galgames" prepend-icon="mdi-dice-multiple" title="Galgame紀錄"></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu v-model="otherMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-home-group" append-icon="mdi-menu-down">
+            其他功能
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item to="/articles/create" prepend-icon="mdi-pencil" title="建立文章"></v-list-item>
+          <v-list-item to="/todo-topics/system/create" prepend-icon="mdi-server" title="建立系統站台"></v-list-item>
+          <v-list-item
+            v-if="userData.id !== undefined && userData.id !== 0"
+            to="/user-maintain"
+            prepend-icon="mdi-account-cog"
+            title="使用者帳號維護"
+          ></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-btn
+        v-if="userData.username === '' || userData.username === undefined"
+        variant="text"
+        prepend-icon="mdi-login"
+        @click.prevent="openLoginModal"
+      >
+        登入
+      </v-btn>
+      <v-btn v-else variant="text" prepend-icon="mdi-logout" @click.prevent="handleLogout">登出</v-btn>
+    </div>
+
+    <LoginModal v-model="showLoginModal" />
+  </v-app-bar>
+
+  <!-- Mobile Navigation Drawer -->
+  <v-navigation-drawer v-model="drawer" temporary location="left" class="mobile-drawer">
+    <v-list>
+      <v-list-item to="/" prepend-icon="mdi-home" title="首頁" @click="drawer = false"></v-list-item>
+      <v-list-item
+        to="/system-todos"
+        prepend-icon="mdi-calendar-clock"
+        title="系統更新待辦"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/self-galgames/new"
+        prepend-icon="mdi-plus-circle"
+        title="新Galgame紀錄"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/self-galgames"
+        prepend-icon="mdi-dice-multiple"
+        title="Galgame紀錄"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/todolists"
+        prepend-icon="mdi-format-list-checks"
+        title="TodoList"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/todo-topics/create"
+        prepend-icon="mdi-tag-plus"
+        title="建立Todo類別"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/articles/create"
+        prepend-icon="mdi-pencil"
+        title="建立文章"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        v-if="userData.username !== '' && userData.username !== undefined"
+        to="/user-maintain"
+        prepend-icon="mdi-account-cog"
+        title="使用者帳號維護"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        v-if="userData.username === '' || userData.username === undefined"
+        prepend-icon="mdi-login"
+        title="登入"
+        @click="
+          openLoginModal();
+          drawer = false;
+        "
+      ></v-list-item>
+      <v-list-item v-else prepend-icon="mdi-logout" title="登出" @click="handleLogout"></v-list-item>
+    </v-list>
+  </v-navigation-drawer>
 </template>
 
 <style lang="scss" scoped>
-.nav-wrapper {
-  background-color: rgb(var(--v-theme-background));
+.navbar {
+  background-color: rgb(var(--v-theme-background)) !important;
+  border-bottom: 2px solid rgb(var(--v-theme-border));
 }
 
-.brand-logo {
-  margin-left: 10px;
+.brand-link {
+  text-decoration: none;
+  color: #000000;
+  font-weight: 600;
+  font-size: 1.25rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
-a {
-  color: #444444 !important;
+.mobile-drawer {
+  background-color: rgb(var(--v-theme-background)) !important;
 }
 
-.dropdown-trigger {
-  padding-right: 0px;
-}
-
-.dropdown-content {
-  width: 220px !important;
-  background-color: rgb(var(--v-theme-background));
-  border-radius: 10px;
+:deep(.v-list-item) {
+  color: #444444;
 }
 </style>
