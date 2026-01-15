@@ -7,6 +7,7 @@ const { showLoginModal, openLoginModal } = useLoginModal();
 
 const userData = computed(() => user.value);
 const drawer = ref(false);
+const profileDrawer = ref(false);
 
 const todoMenu = ref(false);
 const galgameMenu = ref(false);
@@ -91,7 +92,10 @@ const handleLogout = () => {
       >
         登入
       </v-btn>
-      <v-btn v-else variant="text" prepend-icon="mdi-logout" @click.prevent="handleLogout">登出</v-btn>
+      <template v-else>
+        <v-btn variant="text" prepend-icon="mdi-account-circle" @click.prevent="profileDrawer = true"> 個人資料 </v-btn>
+        <v-btn variant="text" prepend-icon="mdi-logout" @click.prevent="handleLogout">登出</v-btn>
+      </template>
     </div>
 
     <LoginModal v-model="showLoginModal" />
@@ -145,6 +149,15 @@ const handleLogout = () => {
         @click="drawer = false"
       ></v-list-item>
       <v-list-item
+        v-if="userData.username !== '' && userData.username !== undefined"
+        prepend-icon="mdi-account-circle"
+        title="個人資料"
+        @click="
+          profileDrawer = true;
+          drawer = false;
+        "
+      ></v-list-item>
+      <v-list-item
         v-if="userData.username === '' || userData.username === undefined"
         prepend-icon="mdi-login"
         title="登入"
@@ -155,6 +168,21 @@ const handleLogout = () => {
       ></v-list-item>
       <v-list-item v-else prepend-icon="mdi-logout" title="登出" @click="handleLogout"></v-list-item>
     </v-list>
+  </v-navigation-drawer>
+
+  <!-- Profile Drawer (from right) -->
+  <v-navigation-drawer v-model="profileDrawer" temporary location="right" width="400" class="profile-drawer" touchable>
+    <template v-slot:prepend>
+      <v-toolbar color="transparent" density="compact">
+        <v-spacer></v-spacer>
+        <v-btn icon variant="text" @click="profileDrawer = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+    </template>
+    <ClientOnly>
+      <MyProfile />
+    </ClientOnly>
   </v-navigation-drawer>
 </template>
 
@@ -179,7 +207,26 @@ const handleLogout = () => {
   background-color: rgb(var(--v-theme-background)) !important;
 }
 
+.profile-drawer {
+  background-color: rgb(var(--v-theme-background)) !important;
+
+  // Hide scrollbar but keep scroll functionality
+  :deep(.v-navigation-drawer__content) {
+    overflow-y: auto;
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE and Edge
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome, Safari, Opera
+    }
+  }
+}
+
 :deep(.v-list-item) {
   color: #444444;
+}
+
+:deep(.v-overlay__scrim) {
+  pointer-events: auto !important;
 }
 </style>

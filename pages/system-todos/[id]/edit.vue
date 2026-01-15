@@ -10,6 +10,8 @@ import { useRouter } from "vue-router";
 import { initMaterialDatepicker, initMaterialFormSelect, initMaterialDropdown } from "@/composables/useMaterial";
 
 import { messageStorage } from "@/utils/messageHandler";
+import { errorHandler } from "@/utils/errorHandler";
+import { userInfoHandler } from "@/utils/userInfoHandler";
 
 import type { SystemTodoUpdateRequest } from "@/types/request";
 import type { CommonResponse, SystemTodoQueryResponse, TodoTopicQueryResponse } from "@/types/response";
@@ -37,17 +39,26 @@ const { data: data2, error: error2 } = await useFetch<CommonResponse<TodoTopicQu
   },
 );
 
-const systemTodo = data.value?.data as SystemTodoQueryResponse[];
-const systemTodoTopics = data2.value?.data as TodoTopicQueryResponse[];
+const systemTodo = data.value?.data as SystemTodoQueryResponse[] | undefined;
+const systemTodoTopics = data2.value?.data as TodoTopicQueryResponse[] | undefined;
+
+if (import.meta.client && (error.value || !systemTodo || systemTodo.length === 0)) {
+  if (error.value?.statusCode === 500) {
+    messageStorage(error.value.statusCode, error.value.errMsg);
+  } else {
+    messageStorage();
+  }
+  router.push("/message");
+}
 
 const form = ref<SystemTodoUpdateRequest>({
-  id: systemTodo[0].id,
-  systemName: systemTodo[0].systemName,
-  title: systemTodo[0].title,
-  detail: systemTodo[0].detail,
-  status: systemTodo[0].status,
-  deadline: systemTodo[0].deadline ? new Date(systemTodo[0].deadline).toISOString().slice(0, 10) : null,
-  urgency: systemTodo[0].urgency,
+  id: systemTodo?.[0]?.id ?? 0,
+  systemName: systemTodo?.[0]?.systemName ?? "",
+  title: systemTodo?.[0]?.title ?? "",
+  detail: systemTodo?.[0]?.detail ?? "",
+  status: systemTodo?.[0]?.status ?? 0,
+  deadline: systemTodo?.[0]?.deadline ? new Date(systemTodo[0].deadline).toISOString().slice(0, 10) : null,
+  urgency: systemTodo?.[0]?.urgency ?? 0,
   updatedName: user.value.username,
 });
 

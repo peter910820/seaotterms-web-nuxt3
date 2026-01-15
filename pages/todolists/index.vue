@@ -75,7 +75,7 @@ if (todosData.value) {
   router.push("/message");
 }
 
-// create
+// Create
 const handleSubmit = async () => {
   if (deadlineDate.value) {
     form.value.deadline = new Date(deadlineDate.value);
@@ -113,7 +113,7 @@ const handleSubmit = async () => {
   }
 };
 
-// update
+// Update
 const changeStatus = async (id: number, status: number) => {
   let statusText = "";
   switch (status) {
@@ -148,7 +148,7 @@ const changeStatus = async (id: number, status: number) => {
   }
 };
 
-// delete
+// Delete
 const deleteTodo = async (id: number) => {
   if (confirm("確定刪除?")) {
     try {
@@ -229,17 +229,11 @@ const deleteTodo = async (id: number) => {
       </v-card-text>
     </v-card>
 
-    <v-card
-      v-for="todo in todos"
-      :key="todo.id"
-      class="todo-card mb-3 floatup-div wow animate__slideInUp"
-    >
+    <v-card v-for="todo in todos" :key="todo.id" class="todo-card mb-3 floatup-div wow animate__slideInUp">
       <v-card-text class="d-flex align-center pa-3">
         <v-row no-gutters align="center">
           <!-- Title -->
-          <v-col :cols="todo.deadline ? 5 : 7" class="todo-title">
-            [{{ todo.topic }}]{{ todo.title }}
-          </v-col>
+          <v-col :cols="todo.deadline ? 5 : 7" class="todo-title"> [{{ todo.topic }}]{{ todo.title }} </v-col>
 
           <!-- Deadline -->
           <v-col v-if="todo.deadline" cols="2" class="todo-deadline text-center">
@@ -281,12 +275,7 @@ const deleteTodo = async (id: number) => {
               >
                 C
               </v-btn>
-              <v-btn
-                class="button-status background-d"
-                size="small"
-                variant="flat"
-                @click="deleteTodo(todo.id)"
-              >
+              <v-btn class="button-status background-d" size="small" variant="flat" @click="deleteTodo(todo.id)">
                 D
               </v-btn>
             </div>

@@ -17,7 +17,7 @@ import type { CommonResponse, TagQueryResponse } from "@/types/response";
 
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
-import "highlight.js/styles/github-dark.css"; // highlight-styles
+import "highlight.js/styles/github-dark.css"; // Code highlight styles
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -51,7 +51,7 @@ if (import.meta.client && error.value) {
 const choiceTag = computed(() => data.value?.data ?? []);
 
 const handleSubmit = async () => {
-  // 防止重复提交
+  // Prevent duplicate submission
   if (loading.value) {
     return;
   }

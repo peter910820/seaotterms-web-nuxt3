@@ -1,4 +1,4 @@
-/* button-submit */
+/* Submit button */
 .button-submit {
   background-color: #c2fbd7;
   border-radius: 100px;
@@ -41,7 +41,7 @@
   font-family: "Cubic_11_1.100_R";
 }
 
-/* button-management */
+/* Management button */
 .v-btn.button-management {
   background: #ff4742;
   border: 1px solid #ff4742;
@@ -76,7 +76,7 @@
   opacity: 0.5;
 }
 
-/* button-status */
+/* Status button */
 .button-status {
   background: linear-gradient(to bottom right, #ef4765, #ff9a5a);
   border: 0;
@@ -111,7 +111,7 @@
     0.125rem 0.125rem 1rem rgba(255, 154, 90, 0.5);
 }
 
-/* button-simple */
+/* Simple button */
 .v-btn.button-simple {
   align-items: center;
   appearance: none;
@@ -174,7 +174,7 @@
   cursor: not-allowed;
 }
 
-/* button-flip */
+/* Flip button */
 .button-flip {
   background-color: rgba(0, 140, 255, 0.678);
   font-weight: bold;

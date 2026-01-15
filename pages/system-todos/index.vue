@@ -50,7 +50,7 @@ systemTodoStore.$subscribe(() => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openModal = async (id: number) => {
-  // refresh user data and check login
+  // Refresh user data and check login status
   // refreshUserData();
 
   try {
@@ -308,13 +308,13 @@ const deleteTodo = async (id: number) => {
 
   &.urgency-high {
     .todo-title {
-      color: rgb(255, 152, 0); // orange
+      color: rgb(255, 152, 0); // Orange
     }
   }
 
   &.urgency-urgent {
     .todo-title {
-      color: rgb(211, 47, 47); // red
+      color: rgb(211, 47, 47); // Red
     }
   }
 }
