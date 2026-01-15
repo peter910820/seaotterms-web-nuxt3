@@ -68,15 +68,7 @@ const handleSubmit = async () => {
             density="comfortable"
             :rules="titleRules"
           />
-          <v-btn
-            color="primary"
-            variant="elevated"
-            size="large"
-            :loading="loading"
-            @click="handleSubmit"
-            type="submit"
-            block
-          >
+          <v-btn color="primary" variant="elevated" size="large" :loading="loading" type="submit" block>
             建立主題
             <v-icon end>mdi-send</v-icon>
           </v-btn>

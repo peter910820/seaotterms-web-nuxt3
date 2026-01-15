@@ -475,13 +475,13 @@ h5 {
 }
 
 .button-inactive {
-  background-color: rgb(var(--v-theme-surface)) !important;
-  color: rgb(var(--v-theme-on-surface)) !important;
-  border: 2px solid rgb(var(--v-theme-border)) !important;
+  background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%) !important;
+  color: #424242 !important;
+  border: 2px solid transparent !important;
 
   &:hover {
-    background-color: rgb(var(--v-theme-surface)) !important;
-    border-color: rgb(var(--v-theme-border)) !important;
+    background: linear-gradient(135deg, #bdbdbd 0%, #9e9e9e 100%) !important;
+    color: #212121 !important;
   }
 }
 
