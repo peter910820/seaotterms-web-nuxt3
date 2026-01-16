@@ -4,10 +4,9 @@ definePageMeta({
   middleware: "require-management",
 });
 
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-
-import { initMaterialDatepicker, initMaterialFormSelect, initMaterialDropdown } from "@/composables/useMaterial";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import { messageStorage } from "@/utils/messageHandler";
 import { errorHandler } from "@/utils/errorHandler";
@@ -51,36 +50,47 @@ if (import.meta.client && (error.value || !systemTodo || systemTodo.length === 0
   router.push("/message");
 }
 
+const deadlineDate = ref<string>(
+  systemTodo?.[0]?.deadline ? new Date(systemTodo[0].deadline).toISOString().slice(0, 10) : "",
+);
+
 const form = ref<SystemTodoUpdateRequest>({
   id: systemTodo?.[0]?.id ?? 0,
   systemName: systemTodo?.[0]?.systemName ?? "",
   title: systemTodo?.[0]?.title ?? "",
   detail: systemTodo?.[0]?.detail ?? "",
   status: systemTodo?.[0]?.status ?? 0,
-  deadline: systemTodo?.[0]?.deadline ? new Date(systemTodo[0].deadline).toISOString().slice(0, 10) : null,
+  deadline: null,
   urgency: systemTodo?.[0]?.urgency ?? 0,
   updatedName: user.value.username,
 });
 
-onMounted(async () => {
-  // init materializecss
-  initMaterialDatepicker();
-  initMaterialDropdown();
-  initMaterialFormSelect();
-});
+const urgencyOptions = [
+  { title: "普通", value: 0 },
+  { title: "高優先度", value: 1 },
+  { title: "緊急", value: 2 },
+];
+
+const loading = ref(false);
+const formRef = ref();
+const titleRules = [(v: string) => !!v || "此欄不能為空"];
+const systemNameRules = [(v: string) => !!v || "此欄不能為空"];
 
 const handleSubmit = async () => {
-  const deadlineTag = document.getElementById("deadline") as HTMLInputElement | null;
-  if (deadlineTag) {
-    form.value.deadline = deadlineTag.value;
-  } else {
-    // 找不到ID為deadline的HTML元素
-    messageStorage();
-    router.push("/message");
+  // Prevent duplicate submission
+  if (loading.value) {
     return;
   }
-  if ((form.value.deadline ?? "").trim() !== "") {
-    const dateStr = form.value.deadline + "T00:00:00Z";
+
+  // Validate form before submission
+  const { valid } = await formRef.value.validate();
+  if (!valid) {
+    return;
+  }
+
+  // Process deadline date
+  if (deadlineDate.value) {
+    const dateStr = deadlineDate.value + "T00:00:00Z";
     const timestamp = Date.parse(dateStr);
 
     if (isNaN(timestamp)) {
@@ -91,11 +101,14 @@ const handleSubmit = async () => {
   } else {
     form.value.deadline = null;
   }
+
+  // Additional validation check
   if (form.value.title.trim() === "") {
     alert("請確保標題有正確填寫");
     return;
   }
 
+  loading.value = true;
   try {
     const response = await $fetch<CommonResponse>(`system-todos/${form.value.id}`, {
       baseURL: import.meta.env.VITE_API_URL,
@@ -108,78 +121,112 @@ const handleSubmit = async () => {
     router.push("/message");
   } catch (error) {
     errorHandler(error);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <template>
-  <div class="row main-block">
-    <h1>更新系統代辦</h1>
-    <div class="col s12 sub-block wow animate__flipInX">
-      <div class="row">
-        <div class="col s4 input-field mobile-hidden">
-          <select v-model="form.systemName">
-            <option class="validate" value="" disabled selected>選擇站台</option>
-            <option v-for="todoTopic in systemTodoTopics" :key="todoTopic.topicName" :value="todoTopic.topicName">
-              {{ todoTopic.topicName }}
-            </option>
-          </select>
-          <label>選擇站台</label>
-        </div>
-        <div class="col s4 input-field mobile-display">
-          <select v-model="form.systemName" class="browser-default">
-            <option class="validate" value="" disabled selected>選擇站台</option>
-            <option v-for="todoTopic in systemTodoTopics" :key="todoTopic.topicName" :value="todoTopic.topicName">
-              {{ todoTopic.topicName }}
-            </option>
-          </select>
-        </div>
-        <!-- title -->
-        <div class="col s8 input-field">
-          <input v-model="form.title" id="title" type="text" class="validate" required />
-          <span class="helper-text" data-error="此欄不能為空" data-success=""></span>
-          <label for="title">標題</label>
-        </div>
-        <div class="input-field col s12">
-          <textarea v-model="form.detail" id="detail" class="materialize-textarea"></textarea>
-          <label for="detail">詳細資訊</label>
-        </div>
-        <!-- urgency -->
-        <div class="col s3 input-field mobile-hidden">
-          <select v-model="form.urgency">
-            <option class="validate" :value="0" selected>普通</option>
-            <option class="validate" :value="1" selected>高優先度</option>
-            <option class="validate" :value="2" selected>緊急</option>
-          </select>
-          <label>選擇急迫度</label>
-        </div>
-        <div class="col s3 input-field mobile-display">
-          <select v-model="form.urgency" class="browser-default">
-            <option class="validate" :value="0" selected>普通</option>
-            <option class="validate" :value="1" selected>高優先度</option>
-            <option class="validate" :value="2" selected>緊急</option>
-          </select>
-        </div>
-        <!-- deadline -->
-        <div class="col s7 input-field">
-          <i class="material-icons prefix">browse_gallery</i>
-          <input v-model="form.deadline" id="deadline" type="text" class="datepicker validate" />
-          <label for="deadline">截止日期</label>
-        </div>
-        <div class="col s2 submit">
-          <button class="button-submit" type="button" @click="handleSubmit">
-            更新
-            <i class="material-icons right">send</i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <v-container class="main-block">
+    <h1 class="page-title mb-6">更新系統代辦</h1>
+    <v-card class="form-card wow animate__flipInX">
+      <v-card-text class="pa-8">
+        <v-form ref="formRef" @submit.prevent="handleSubmit">
+          <v-row>
+            <v-col cols="12" md="4" class="mb-4">
+              <v-select
+                v-model="form.systemName"
+                :items="systemTodoTopics ?? []"
+                item-title="topicName"
+                item-value="topicName"
+                label="選擇站台"
+                placeholder="選擇站台"
+                prepend-inner-icon="mdi-office-building"
+                variant="outlined"
+                density="comfortable"
+                required
+                :rules="systemNameRules"
+              />
+            </v-col>
+            <v-col cols="12" md="8" class="mb-4">
+              <v-text-field
+                v-model="form.title"
+                label="標題"
+                prepend-inner-icon="mdi-format-title"
+                variant="outlined"
+                required
+                density="comfortable"
+                :rules="titleRules"
+              />
+            </v-col>
+          </v-row>
+
+          <v-textarea
+            v-model="form.detail"
+            label="詳細資訊"
+            prepend-inner-icon="mdi-text-box"
+            variant="outlined"
+            density="comfortable"
+            rows="5"
+            class="mb-4"
+            auto-grow
+          />
+
+          <v-row>
+            <v-col cols="12" md="3" class="mb-4">
+              <v-select
+                v-model="form.urgency"
+                :items="urgencyOptions"
+                item-title="title"
+                item-value="value"
+                label="選擇急迫度"
+                prepend-inner-icon="mdi-priority-high"
+                variant="outlined"
+                density="comfortable"
+              />
+            </v-col>
+            <v-col cols="12" md="7" class="mb-4">
+              <v-text-field
+                v-model="deadlineDate"
+                label="截止日期"
+                type="date"
+                prepend-inner-icon="mdi-calendar"
+                variant="outlined"
+                density="comfortable"
+              />
+            </v-col>
+            <v-col cols="12" md="2" class="mb-4 d-flex align-center">
+              <v-btn color="primary" variant="elevated" size="large" :loading="loading" type="submit" block>
+                更新
+                <v-icon end>mdi-send</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.sub-block {
-  font-size: 25px !important;
-  min-height: 400px;
+.main-block {
+  min-height: 100vh;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.page-title {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(var(--v-theme-tagColor));
+}
+
+.form-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  background-color: rgb(var(--v-theme-background));
+  min-height: 200px;
 }
 </style>

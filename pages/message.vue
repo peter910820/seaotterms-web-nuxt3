@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
 import { messageGet } from "@/utils/messageHandler";
 
 import type { MessageData } from "@/types/common";
@@ -10,64 +9,68 @@ let msg: MessageData | undefined = {
   errCode: "",
 };
 
-// 取得訊息資料
+// Get message data
 if (import.meta.client) {
   msg = messageGet();
 }
-
-onMounted(() => {
-  // 清理materialize-textarea自適應化高度的多餘組件
-  const hiddenDivs = document.querySelectorAll(".hiddendiv.common");
-  hiddenDivs.forEach((div) => div.remove());
-});
 </script>
 
 <template>
-  <div class="row main-block">
-    <div class="col s12 sub-block floatup-div wow animate__flipInX">
-      <div v-if="msg" class="row center-content">
-        <div
-          v-if="!msg.statusCode.toString().startsWith('2') && msg.statusCode !== 998 && msg.statusCode !== 999"
-          class="col s12 msg-code"
-        >
-          {{ msg.statusCode }}
-        </div>
-        <div v-else-if="msg.statusCode === 998" class="col s12 msg-code">{{ msg.errCode }}</div>
-        <div :class="['col', 's12', msg.statusCode.toString().startsWith('2') ? 'success-hint' : 'msg-hint']">
-          {{ msg.content }}
-        </div>
-        <div class="col s12 go-home-button">
-          <router-link to="/">
-            <button class="button-submit" type="button">
+  <v-container class="main-block">
+    <v-card class="message-card floatup-div wow animate__flipInX">
+      <v-card-text class="center-content">
+        <div v-if="msg">
+          <div
+            v-if="!msg.statusCode.toString().startsWith('2') && msg.statusCode !== 998 && msg.statusCode !== 999"
+            class="msg-code"
+          >
+            {{ msg.statusCode }}
+          </div>
+          <div v-else-if="msg.statusCode === 998" class="msg-code">{{ msg.errCode }}</div>
+          <div :class="msg.statusCode.toString().startsWith('2') ? 'success-hint' : 'msg-hint'">
+            {{ msg.content }}
+          </div>
+          <div class="go-home-button">
+            <v-btn color="primary" variant="elevated" size="large" to="/" class="button-submit">
               回到首頁
-              <i class="material-icons right">home</i>
-            </button>
-          </router-link>
+              <v-icon end>mdi-home</v-icon>
+            </v-btn>
+          </div>
         </div>
-      </div>
-      <div v-else class="row center-content">
-        <div class="col s12 msg-hint">Session遺失，請聯絡管理員</div>
-        <div class="col s12 msg-hint">Session lost, please contact the administrator</div>
-        <div class="col s12 go-home-button">
-          <router-link to="/">
-            <button class="button-submit" type="button">
+        <div v-else>
+          <div class="msg-hint">Session遺失，請聯絡管理員</div>
+          <div class="msg-hint">Session lost, please contact the administrator</div>
+          <div class="go-home-button">
+            <v-btn color="primary" variant="elevated" size="large" to="/" class="button-submit">
               回到首頁
-              <i class="material-icons right">home</i>
-            </button>
-          </router-link>
+              <v-icon end>mdi-home</v-icon>
+            </v-btn>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.sub-block {
-  max-height: 600px;
-  height: 600px;
-  font-size: 60px;
-  overflow: auto;
+.main-block {
+  min-height: 100vh;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.message-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  background-color: rgb(var(--v-theme-background));
+  max-height: 600px;
+  min-height: 400px;
+  width: 100%;
+}
+
 .center-content {
   display: flex;
   flex-direction: column;
@@ -75,23 +78,52 @@ onMounted(() => {
   text-align: center;
   justify-content: center;
   font-size: 30px;
-  height: 100%;
+  min-height: 400px;
+  padding: 2rem;
 }
+
 .msg-code {
   font-size: 80px;
-  color: red;
+  color: rgb(var(--v-theme-error));
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
+
 .msg-hint {
   font-size: 40px;
   margin-bottom: 20px;
-  color: red;
+  color: rgb(var(--v-theme-error));
 }
+
 .success-hint {
   font-size: 60px;
   margin-bottom: 20px;
-  color: blue;
+  color: rgb(var(--v-theme-primary));
 }
+
 .go-home-button {
   margin-top: 30px;
+}
+
+.button-submit {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+}
+
+@media (max-width: 768px) {
+  .msg-code {
+    font-size: 60px;
+  }
+
+  .msg-hint {
+    font-size: 30px;
+  }
+
+  .success-hint {
+    font-size: 45px;
+  }
+
+  .center-content {
+    font-size: 24px;
+  }
 }
 </style>

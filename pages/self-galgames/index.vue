@@ -52,142 +52,127 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
 </script>
 
 <template>
-  <div class="row main-block">
-    <div class="col s12 center-align galgameBrandTitle">
-      <div class="col s12">海獺的Galgame遊玩紀錄</div>
-    </div>
-    <div class="col s12 galgameBrandHeader">
-      <div class="col s5">ゲーム</div>
-      <div class="col s3">ブランド</div>
-      <div class="col s2">遊玩結束時間</div>
-      <div class="col s2">批評空間網址</div>
-    </div>
-    <div class="col s12 galgameBrandHeader">
-      <div class="col s5"></div>
-      <div class="col s3">攻略總數: {{ total }}</div>
-      <div class="col s2"></div>
-      <div class="col s2"></div>
-    </div>
-    <div
-      class="col s12 galgameBrand floatup-div wow animate__slideInUp"
+  <v-container class="main-block">
+    <h1 class="page-title mb-6">海獺的Galgame遊玩紀錄</h1>
+
+    <v-card class="header-card mb-4">
+      <v-card-text class="pa-4">
+        <v-row align="center" class="galgame-header">
+          <v-col cols="12" sm="5" class="text-center font-weight-bold">ゲーム</v-col>
+          <v-col cols="12" sm="3" class="text-center font-weight-bold">ブランド</v-col>
+          <v-col cols="12" sm="2" class="text-center font-weight-bold">遊玩結束時間</v-col>
+          <v-col cols="12" sm="2" class="text-center font-weight-bold">批評空間網址</v-col>
+        </v-row>
+        <v-row align="center" class="galgame-header">
+          <v-col cols="12" sm="5"></v-col>
+          <v-col cols="12" sm="3" class="text-center font-weight-bold">攻略總數: {{ total }}</v-col>
+          <v-col cols="12" sm="2"></v-col>
+          <v-col cols="12" sm="2"></v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+
+    <v-card
       v-for="game in sortedFlattenedRecordList"
       :key="game.userId"
+      class="game-card mb-3 floatup-div wow animate__slideInUp"
     >
-      <div class="col s5 game">{{ game.gameName }}</div>
-      <div class="col s3">{{ game.brandName }}</div>
-      <div class="col s2">
-        {{
-          game.completedAt === null || game.completedAt === undefined
-            ? formatDate(game.createdAt)
-            : formatDate(game.completedAt)
-        }}
-      </div>
-      <div class="col s2 rainbow-text">
-        <a :href="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.gameErogsId}`">{{
-          game.gameErogsId
-        }}</a>
-      </div>
-    </div>
-  </div>
+      <v-card-text class="pa-3">
+        <v-row align="center" no-gutters>
+          <v-col cols="12" sm="5" class="game-name">{{ game.gameName }}</v-col>
+          <v-col cols="12" sm="3" class="text-center">{{ game.brandName }}</v-col>
+          <v-col cols="12" sm="2" class="text-center">
+            {{
+              game.completedAt === null || game.completedAt === undefined
+                ? formatDate(game.createdAt)
+                : formatDate(game.completedAt)
+            }}
+          </v-col>
+          <v-col cols="12" sm="2" class="text-center rainbow-text">
+            <a
+              :href="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.gameErogsId}`"
+              target="_blank"
+              >{{ game.gameErogsId }}</a
+            >
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.col {
-  max-height: 50px;
-  height: 50px;
-  margin-top: 10px;
+.main-block {
+  padding: 40px;
+}
+
+.page-title {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(var(--v-theme-tagColor));
+  text-align: center;
+}
+
+.header-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  background-color: rgb(var(--v-theme-background));
+}
+
+.galgame-header {
+  font-size: 1.25rem;
+  min-height: 60px;
+}
+
+.game-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  background-color: rgb(var(--v-theme-background));
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.game-name {
+  font-weight: bold;
+  font-size: 1.125rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.galgameBrandTitle {
-  text-align: center;
-  font-size: 50px;
-  font-weight: bold;
-  max-height: 100px;
-  height: 100px;
-  > .col {
-    padding: 0px;
-    margin: 0px;
-    min-height: 100%;
+
+.rainbow-text a {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: none;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
   }
 }
-.galgameBrandHeader {
-  text-align: center;
-  font-size: x-large;
-  font-weight: bold;
-  max-height: 80px;
-  height: 80px;
-}
-.galgameBrand {
-  text-align: center;
-  max-height: 100%;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 20px;
-  > div {
-    font-size: x-large;
-    margin-left: 5px;
-    padding: 0px;
-    max-height: 100%;
-    > button {
-      padding: 0px !important;
-      height: 30px;
-      max-height: 30px;
-      font-size: 20px;
-    }
+
+@media (max-width: 768px) {
+  .main-block {
+    padding: 20px;
   }
-}
-.game {
-  font-weight: bold;
-}
-.modify {
-  height: 30px;
-  width: 40px;
-}
-.details {
-  max-height: 200px;
-  height: 200px;
-}
-td {
-  font-size: large;
-}
-a {
-  color: black !important;
-}
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  height: 75vh;
-  width: 75vw;
-  overflow-y: auto;
-  overflow-x: hidden;
-  background: rgb(var(--v-theme-background));
-  border-radius: 10px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  padding: 40px;
-}
+  .page-title {
+    font-size: 1.5rem;
+  }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-.fade-enter-to,
-.fade-leave-from {
-  opacity: 1;
+  .galgame-header {
+    font-size: 1rem;
+    min-height: 50px;
+  }
+
+  .game-name {
+    font-size: 1rem;
+  }
 }
 </style>

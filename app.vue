@@ -68,30 +68,8 @@ body {
   z-index: 10;
 }
 
-.browser-default {
-  background-color: rgb(var(--v-theme-background));
-  font-size: 15px;
-  font-family: "Cubic_11_1.100_R";
-}
-
 .floatup-div {
   cursor: default;
-}
-
-/* hide materializecss select in mobile */
-.mobile-hidden {
-  display: block !important;
-}
-.mobile-display {
-  display: none !important;
-}
-@media (max-width: 768px) {
-  .mobile-display {
-    display: block !important;
-  }
-  .mobile-hidden {
-    display: none !important;
-  }
 }
 
 .loading-hidden {
