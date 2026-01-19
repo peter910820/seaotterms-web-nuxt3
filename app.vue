@@ -51,25 +51,10 @@ body {
   padding: 40px;
 }
 
-.sub-block {
-  padding-top: 20px;
-  margin-top: 10px;
-  cursor: default;
-  border: 2px solid rgb(var(--v-theme-border));
-  border-radius: 20px;
-  display: inline-block;
-  word-wrap: break-word;
-  word-break: break-word;
-}
-
 .sticky-navbar {
   position: sticky;
   top: 0px;
   z-index: 10;
-}
-
-.floatup-div {
-  cursor: default;
 }
 
 .loading-hidden {
