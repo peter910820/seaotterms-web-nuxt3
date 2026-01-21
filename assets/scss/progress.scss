@@ -1,9 +1,9 @@
 #nprogress .bar {
-  background: chocolate !important;
+  background: rgb(var(--v-theme-progress-color)) !important;
   height: 4px !important;
 }
 
 #nprogress .spinner-icon {
-  border-top-color: chocolate !important;
-  border-left-color: chocolate !important;
+  border-top-color: rgb(var(--v-theme-progress-color)) !important;
+  border-left-color: rgb(var(--v-theme-progress-color)) !important;
 }
