@@ -9,6 +9,7 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 
 import { messageStorage } from "@/utils/messageHandler";
+import { userInfoHandler } from "@/utils/userInfoHandler";
 
 import type { TodoTopicCreateRequest } from "@/types/request";
 import type { CommonResponse } from "@/types/response";
@@ -24,12 +25,16 @@ const form = ref<TodoTopicCreateRequest>({
   updateName: user.value.username,
 });
 
+const loading = ref(false);
+const titleRules = [(v: string) => !!v || "此欄不能為空"];
+
 const handleSubmit = async () => {
   if (form.value.topicName.trim() === "") {
     alert("標題不得為空");
     return;
   }
 
+  loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("todo-topics", {
       baseURL: import.meta.env.VITE_API_URL,
@@ -42,35 +47,37 @@ const handleSubmit = async () => {
     router.push("/message");
   } catch (error) {
     errorHandler(error);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <template>
-  <div class="row main-block">
-    <h1>建立系統站台</h1>
-    <div class="col s12 sub-block wow animate__flipInX">
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">title</i>
-          <input id="title" v-model="form.topicName" type="text" class="validate" required />
-          <span class="helper-text" data-error="此欄不能為空" data-success=""></span>
-          <label for="title">title</label>
-        </div>
-        <div class="col s12">
-          <button @click="handleSubmit()" class="button-submit" type="button">
+  <v-container class="main-block">
+    <h1 class="page-title mb-6">建立系統站台</h1>
+    <v-card class="form-card" color="background">
+      <v-card-text class="pa-8">
+        <v-form @submit.prevent="handleSubmit">
+          <v-text-field
+            v-model="form.topicName"
+            label="Title"
+            prepend-inner-icon="mdi-format-title"
+            variant="outlined"
+            required
+            class="mb-6"
+            density="comfortable"
+            :rules="titleRules"
+          />
+          <v-btn color="primary" variant="elevated" size="large" :loading="loading" type="submit" block>
             建立系統站台
-            <i class="material-icons right">send</i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+            <v-icon end>mdi-send</v-icon>
+          </v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.sub-block {
-  min-height: 200px;
-  height: auto;
-}
 </style>

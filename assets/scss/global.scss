@@ -1,13 +1,5 @@
 :root {
   font-family: "Cubic_11_1.100_R", "JosefinSans-VariableFont_wght";
-
-  --color-background: #f2ebea;
-  --color-border: white; // --image-background: #212529;
-  --image-banner: url("/background.png"); // default
-}
-
-.dark {
-  --color-background: #212529;
 }
 
 /* font-settings */
@@ -26,4 +18,30 @@
 @font-face {
   font-family: "jf-openhuninn-2.1";
   src: url("/fonts/jf-openhuninn-2.1.ttf") format("truetype");
+}
+
+/* Common form styles */
+.main-block {
+  min-height: 100vh;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.page-title {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(var(--v-theme-tagColor));
+}
+
+.form-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  background-color: rgb(var(--v-theme-background));
+  min-height: 200px;
+}
+
+/* Unified submit button styles */
+.v-btn[type="submit"].v-btn--elevated {
+  border-radius: 12px;
 }

@@ -1,8 +1,17 @@
 <script lang="ts" setup>
 import type { CommonResponse, ArticleQueryResponse } from "@/types/response";
+import { messageStorage } from "@/utils/messageHandler";
+import { errorHandler } from "@/utils/errorHandler";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const Typed: any;
+
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    WOW: any;
+  }
+}
 
 const router = useRouter();
 
@@ -38,44 +47,65 @@ const tagClick = (tag: string, event: any) => {
 
 onMounted(() => {
   // eslint-disable-next-line no-undef
-  new Typed(".banner>div>div", {
+  new Typed(".banner-text", {
     strings: ["正在嘗試進步，", "學很多怪技術跟做很多小東西。"],
     typeSpeed: 80,
     loop: true,
     showCursor: false,
   });
+
+  // Initialize WOW.js for scroll animations
+  if (window.WOW) {
+    const wow = new window.WOW();
+    wow.init();
+  }
 });
 </script>
 
 <template>
-  <div class="row main-block">
-    <div class="col s12 sub-block banner wow animate__flipInX">
-      <div><div></div></div>
-    </div>
-    <h1>首頁/文章</h1>
-    <div
-      class="col s12 sub-block articles floatup-div wow animate__slideInUp"
+  <div class="main-block">
+    <v-card class="banner-card mb-4" :style="{ backgroundImage: 'var(--v-banner-image)' }">
+      <div class="banner-overlay">
+        <div class="banner-text"></div>
+      </div>
+    </v-card>
+
+    <h1 class="mb-4">首頁/文章</h1>
+
+    <v-card
       v-for="article in articles"
       :key="article.id"
+      class="article-card mb-4 wow animate__slideInUp"
       @click="link('article', article.id.toString())"
     >
-      <div class="title">{{ article.title }}</div>
-      <div class="username">
-        <i class="material-icons">person</i>
-        SeaotterMS
-      </div>
-      <div class="information">
-        <i class="material-icons">edit</i>
-        {{ article.createdAt }}
-        <i class="material-icons">update</i>
-        {{ article.updatedAt }}
-      </div>
-      <div class="tag">
-        <div class="button-paper" v-for="tag in article.tags" :key="tag.name" @click="tagClick(tag.name, $event)">
-          {{ tag.name }}
+      <v-card-title class="article-title">{{ article.title }}</v-card-title>
+
+      <v-card-text>
+        <div class="d-flex align-center mb-2">
+          <v-icon size="small" class="mr-2">mdi-account</v-icon>
+          <span>SeaotterMS</span>
         </div>
-      </div>
-    </div>
+
+        <div class="d-flex align-center mb-2">
+          <v-icon size="small" class="mr-2">mdi-pencil</v-icon>
+          <span class="mr-4">{{ article.createdAt }}</span>
+          <v-icon size="small" class="mr-2">mdi-update</v-icon>
+          <span>{{ article.updatedAt }}</span>
+        </div>
+
+        <div class="d-flex align-end justify-end flex-wrap">
+          <v-chip
+            v-for="tag in article.tags"
+            :key="tag.name"
+            class="ma-1"
+            size="small"
+            @click.stop="tagClick(tag.name, $event)"
+          >
+            {{ tag.name }}
+          </v-chip>
+        </div>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
@@ -86,62 +116,65 @@ onMounted(() => {
   overflow: hidden;
 }
 
-.sub-block {
-  max-height: 180px;
-  height: 180px;
+.main-block {
+  padding: 40px;
 }
 
-.banner {
-  min-height: 250px;
-  max-height: 250px;
-  border: 2px solid var(--color-border);
+.banner-card {
+  height: 250px;
+  border: 2px solid rgb(var(--v-theme-border));
   border-radius: 100px;
-  margin-bottom: 20px;
   text-align: center;
-  background-image: var(--image-banner);
   background-size: cover;
   background-position: 50% 20%;
   position: relative;
-  > div {
-    min-height: 100%;
-    max-height: 100%;
-    border: 2px solid transparent;
-    border-radius: 100px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background-color: rgba(240, 248, 255, 0.5);
-    > div {
-      font-family: "ChenYuluoyan-Thin";
-      min-height: 100%;
-      max-height: 100%;
-      margin: 50px;
-      word-wrap: break-word;
-      font-size: 60px;
-    }
+  overflow: hidden;
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: 100px;
+  background-color: var(--v-banner-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-text {
+  font-family: "ChenYuluoyan-Thin";
+  margin: 50px;
+  font-size: 60px;
+  word-wrap: break-word;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.article-card {
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: var(--v-card-color-1);
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--v-theme-shadow-light);
   }
 }
 
-.articles {
-  border: 2px solid var(--color-border);
-  border-radius: 20px;
-}
-.title {
+.article-title {
   @extend %basic-text-style;
   font-size: 30px;
+  padding-bottom: 8px;
 }
-.information {
-  @extend %basic-text-style;
-}
-.tag {
-  @extend %basic-text-style;
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  > div {
-    margin-left: 5px;
-  }
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
 }
 </style>

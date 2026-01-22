@@ -28,37 +28,59 @@ const link = (tagName: string) => {
 </script>
 
 <template>
-  <div class="row main-block">
-    <h1>標籤一覽</h1>
-    <div class="col s12 sub-block">
-      <div class="col s6" v-for="Tag in tags" :key="Tag.name">
-        <div class="button-flip floatup-div wow animate__slideInUp" @click="link(Tag.name)">
-          <span>{{ Tag.name }}</span>
-        </div>
-      </div>
-    </div>
+  <div class="main-block">
+    <v-container>
+      <h1 class="mb-4">標籤一覽</h1>
+
+      <v-row>
+        <v-col v-for="Tag in tags" :key="Tag.name" cols="12" sm="4" md="4">
+          <v-card class="tag-card floatup-div" @click="link(Tag.name)">
+            <v-card-text class="tag-text">
+              {{ Tag.name }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.sub-block {
-  min-height: 200px;
-  margin-top: 10px;
-  padding: 25px;
-  > div {
-    min-height: 200px;
-    padding: 10px;
-    div {
-      min-height: 200px;
-      font-size: 50px;
-      text-align: center;
-      padding: 10px;
-      border: 2px solid var(--color-border);
-      border-radius: 50px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.main-block {
+  padding: 40px;
+}
+
+.tag-card {
+  min-height: 100px;
+  background-color: rgb(var(--v-theme-background));
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+.tag-text {
+  min-height: 100px;
+  font-size: 24px;
+  text-align: center;
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
 }
 </style>

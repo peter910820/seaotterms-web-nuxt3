@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/useUserStore";
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const Typed: any;
 
@@ -23,122 +24,201 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="myProfile">
-    <div class="h4">
+  <div class="my-profile">
+    <div class="profile-header">
       <div class="headShot">
-        <img v-if="userData.avatar !== '' && userData.avatar !== undefined" :src="userData.avatar" />
-        <img v-else src="/headshot.png" />
+        <img
+          v-if="userData.avatar !== '' && userData.avatar !== undefined"
+          :src="userData.avatar"
+          :alt="userData.username"
+        />
+        <img v-else src="/headshot.png" alt="Default Avatar" />
       </div>
     </div>
-    <div v-if="userData.username !== '' && userData.username !== undefined" class="myName">
-      {{ userData.username }}
-    </div>
-    <div v-else class="myName"><font color="blue">使用者未登入</font></div>
-    <div class="aboutMe typer"></div>
-    <div class="h2">
-      <a class="waves-effect waves-light btn-large" href="https://github.com/peter910820/seaotterms.com">
-        這是專案本身:pepega:
-      </a>
-    </div>
-    <div class="socialLink">
-      <a href="https://github.com/peter910820" target="_blank" rel="noopener noreferrer">
-        <i
-          :class="['fa-brands', 'fa-github', 'fa-2xl', { 'fa-spin': isHoveredGithub }]"
+
+    <div class="profile-content">
+      <div v-if="userData.username !== '' && userData.username !== undefined" class="myName">
+        {{ userData.username }}
+      </div>
+      <div v-else class="myName not-logged-in">使用者未登入</div>
+
+      <div class="aboutMe typer"></div>
+
+      <div class="project-link">
+        <v-btn
+          href="https://github.com/peter910820/seaotterms.com"
+          target="_blank"
+          color="primary"
+          variant="elevated"
+          size="large"
+          block
+          class="project-btn"
+        >
+          <v-icon start>mdi-github</v-icon>
+          這是專案本身:pepega:
+        </v-btn>
+      </div>
+
+      <div class="socialLink">
+        <v-btn
+          href="https://github.com/peter910820"
+          target="_blank"
+          rel="noopener noreferrer"
+          icon
+          variant="text"
+          size="large"
           @mouseover="isHoveredGithub = true"
           @mouseleave="isHoveredGithub = false"
-          style="color: #000000"
-        ></i>
-      </a>
-      <a href="https://x.com/seaotterMS" target="_blank" rel="noopener noreferrer">
-        <i
-          :class="['fa-brands', 'fa-twitter', 'fa-2xl', { 'fa-spin': isHoveredTwitter }]"
+        >
+          <v-icon :class="{ 'icon-spin': isHoveredGithub }" size="32">mdi-github</v-icon>
+        </v-btn>
+        <v-btn
+          href="https://x.com/seaotterMS"
+          target="_blank"
+          rel="noopener noreferrer"
+          icon
+          variant="text"
+          size="large"
           @mouseover="isHoveredTwitter = true"
           @mouseleave="isHoveredTwitter = false"
-          style="color: #74c0fc"
-        ></i>
-      </a>
+        >
+          <v-icon :class="{ 'icon-spin': isHoveredTwitter }" size="32" color="info">mdi-twitter</v-icon>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.myProfile {
+.my-profile {
   min-height: 100vh;
-  max-height: 100vh;
-  > div {
-    margin-top: 10px;
-    margin-left: 5px;
-    margin-right: 5px;
-    max-height: 10%;
-    height: 10%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  > .h4 {
-    max-height: 40%;
-    height: 40%;
-  }
-  > .h2 {
-    max-height: 20%;
-    height: 20%;
-  }
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(var(--v-theme-background));
+}
+
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .headShot {
-  max-height: 300px;
-  height: 100%;
-  max-width: 300px;
-  width: 100%;
+  max-height: 250px;
+  max-width: 250px;
+  height: 250px;
+  width: 250px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed burlywood;
+  border: 2px dashed rgb(var(--v-theme-primary));
   border-radius: 50%;
+  background-color: rgb(var(--v-theme-surface));
+
   > img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
 }
 
+.profile-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
 .myName {
-  font-size: 35px;
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  font-size: 28px;
+  font-weight: bold;
+  color: rgb(var(--v-theme-tagColor));
+  text-align: center;
+
+  &.not-logged-in {
+    color: rgb(var(--v-theme-info));
+  }
 }
 
 .aboutMe {
-  font-size: 20px;
+  font-size: 18px;
   overflow-wrap: break-word;
-  word-break: break-all;
+  word-break: break-word;
   white-space: normal;
-  overflow: hidden;
+  text-align: center;
+  color: rgb(var(--v-theme-text-tertiary));
+  min-height: 60px;
+  padding: 0 16px;
+}
+
+.project-link {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.project-btn {
+  border-radius: 50px;
+  font-family: "Cubic_11_1.100_R", sans-serif;
 }
 
 .socialLink {
   display: flex;
-  gap: 10px;
+  gap: 16px;
+  justify-content: center;
+  margin-top: auto;
+  padding-bottom: 24px;
+
+  :deep(.v-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :deep(.v-icon) {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-.btn-large {
-  width: 85%;
-  background-color: black;
-  border-radius: 100px / 70px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+:deep(.icon-spin) {
+  animation: spin 1s linear infinite;
 }
 
-.btn-large:hover {
-  background-color: rgb(100, 100, 100);
-}
-
-.typer {
-  font-size: 18px;
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 600px) {
-  .row {
-    min-height: 100vh;
-    max-height: 100vh;
+  .my-profile {
+    padding: 16px;
+  }
+
+  .headShot {
+    max-height: 200px;
+    max-width: 200px;
+    height: 200px;
+    width: 200px;
+  }
+
+  .myName {
+    font-size: 24px;
+  }
+
+  .aboutMe {
+    font-size: 16px;
   }
 }
 </style>

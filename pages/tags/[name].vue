@@ -31,37 +31,54 @@ const link = (articleID: number) => {
 </script>
 
 <template>
-  <div class="row main-block">
-    <div class="col s12 tagBlock">
-      <div class="col s12">
-        <h1>{{ tagName }}</h1>
-      </div>
-      <div class="col s6" v-for="article in articles" :key="article.id">
-        <div class="floatup-div wow animate__slideInUp" @click="link(article.id)">
-          {{ article.title }}
-        </div>
-      </div>
-    </div>
+  <div class="main-block">
+    <v-container>
+      <h1 class="text-h4 mb-4">{{ tagName }}</h1>
+
+      <v-row>
+        <v-col v-for="article in articles" :key="article.id" cols="12" sm="6" md="6">
+          <v-card class="article-item-card floatup-div" @click="link(article.id)">
+            <v-card-text class="article-item-text">
+              {{ article.title }}
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.tagBlock {
-  min-height: 200px;
-  margin-top: 10px;
-  padding: 25px;
-  > div {
-    min-height: 100%;
-    padding: 10px;
-    div {
-      font-size: 20px;
-      padding: 10px;
-      border: 2px solid var(--color-border);
-      border-radius: 50px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.main-block {
+  padding: 40px;
+}
+
+.article-item-card {
+  background-color: rgb(var(--v-theme-background));
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+.article-item-text {
+  font-size: 20px;
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+h1 {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
 }
 </style>

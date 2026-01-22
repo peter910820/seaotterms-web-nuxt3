@@ -17,23 +17,24 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div id="loader">
-    <div class="loader"></div>
-  </div>
-  <div class="sticky-navbar">
+  <v-app>
+    <div id="loader">
+      <div class="loader"></div>
+    </div>
     <NavBar />
-  </div>
-  <div class="row">
-    <div class="col l9 m12 s12">
-      <NuxtPage />
-    </div>
-    <div class="col l3 m12 s12 sticky-profile">
-      <ClientOnly>
-        <MyProfile />
-      </ClientOnly>
-    </div>
-  </div>
-  <MainFooter />
+    <v-main>
+      <v-container fluid class="page-container">
+        <v-row class="page-row">
+          <v-col cols="1"></v-col>
+          <v-col cols="10" class="page-content">
+            <NuxtPage />
+          </v-col>
+          <v-col cols="1"></v-col>
+        </v-row>
+      </v-container>
+    </v-main>
+    <!-- <MainFooter /> -->
+  </v-app>
 </template>
 
 <style lang="scss">
@@ -42,7 +43,7 @@ body {
   min-height: 100vh;
   min-width: 768px;
 
-  background-color: var(--color-background);
+  background-color: rgb(var(--v-theme-background));
   background-size: 400% 400%;
 }
 
@@ -50,55 +51,19 @@ body {
   padding: 40px;
 }
 
-.sub-block {
-  padding-top: 20px;
-  margin-top: 10px;
-  cursor: default !important;
-  border: 2px solid var(--color-border);
-  border-radius: 20px;
-  display: inline-block;
-  word-wrap: break-word;
-  word-break: break-word;
-}
-
-.sticky-navbar {
-  position: sticky;
-  top: 0px;
-  z-index: 10;
-}
-
-.sticky-profile {
-  position: sticky;
-  top: 70px;
-}
-
-.browser-default {
-  background-color: var(--color-background);
-  font-size: 15px;
-  font-family: "Cubic_11_1.100_R";
-}
-
-.floatup-div {
-  cursor: default;
-}
-
-/* hide materializecss select in mobile */
-.mobile-hidden {
-  display: block !important;
-}
-.mobile-display {
-  display: none !important;
-}
-@media (max-width: 768px) {
-  .mobile-display {
-    display: block !important;
-  }
-  .mobile-hidden {
-    display: none !important;
-  }
-}
-
 .loading-hidden {
   display: none !important;
+}
+
+.page-container {
+  min-height: 100vh;
+}
+
+.page-row {
+  min-height: 100%;
+}
+
+.page-content {
+  min-height: 100vh;
 }
 </style>

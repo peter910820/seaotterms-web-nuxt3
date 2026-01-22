@@ -4,30 +4,34 @@ definePageMeta({
   middleware: "require-management",
 });
 
-import { ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 
 import { messageStorage } from "@/utils/messageHandler";
-import { initMaterialFormSelect } from "@/composables/useMaterial";
+import { userInfoHandler } from "@/utils/userInfoHandler";
+import { errorHandler } from "@/utils/errorHandler";
 
 import type { ArticleCreateRequest } from "@/types/request";
 import type { CommonResponse, TagQueryResponse } from "@/types/response";
 
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
-import "highlight.js/styles/github-dark.css"; // highlight-styles
+import "highlight.js/styles/github-dark.css"; // Code highlight styles
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+const router = useRouter();
+
 const form = ref<ArticleCreateRequest>({
   title: "",
   username: user.value?.username,
   tags: [],
   content: "",
 });
-const choiceTag = ref<TagQueryResponse[]>();
 
-const router = useRouter();
+const loading = ref(false);
+const titleRules = [(v: string) => !!v || "此欄不能為空"];
 
 const { data, error } = await useFetch<CommonResponse<TagQueryResponse[]>, CommonResponse>("tags", {
   baseURL: import.meta.env.VITE_API_URL,
@@ -44,19 +48,19 @@ if (import.meta.client && error.value) {
   }
 }
 
-choiceTag.value = data.value?.data;
-
-onMounted(async () => {
-  // init materializecss
-  initMaterialFormSelect();
-});
+const choiceTag = computed(() => data.value?.data ?? []);
 
 const handleSubmit = async () => {
+  if (loading.value) {
+    return;
+  }
+
   if (form.value.title.trim() === "") {
     alert("標題不得為空");
     return;
   }
 
+  loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("articles", {
       baseURL: import.meta.env.VITE_API_URL,
@@ -69,6 +73,8 @@ const handleSubmit = async () => {
     router.push("/message");
   } catch (error) {
     errorHandler(error);
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -98,67 +104,177 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
 </script>
 
 <template>
-  <div class="row main-block">
-    <h1>建立</h1>
-    <div class="col s12 sub-block wow animate__flipInX">
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">title</i>
-          <input id="title" v-model="form.title" type="text" class="validate" required />
-          <span class="helper-text" data-error="此欄不能為空" data-success=""></span>
-          <label for="title">title</label>
-        </div>
-        <div class="input-field col s6">
-          <i class="material-icons prefix">account_circle</i>
-          <input id="username" v-model="form.username" type="text" disabled />
-          <!-- <label for="username">userName</label> -->
-        </div>
-        <div class="input-field col s6">
-          <select v-model="form.tags" multiple>
-            <option value="" disabled selected>選擇Tag</option>
-            <option v-for="tag in choiceTag" :key="tag.name" :value="tag.name">
-              {{ tag.name }}
-            </option>
-          </select>
-          <label>Materialize Multiple Select</label>
-        </div>
-        <div class="input-field text-insert col s6">
-          <i class="material-icons prefix">mode_edit</i>
-          <textarea id="textarea1" v-model="form.content" class="materialize-textarea"></textarea>
-          <label for="textarea1">Content</label>
-        </div>
-        <div class="markdown-preview col s6" v-html="renderedMarkdown"></div>
-        <div class="col s12">
-          <p class="hint">本功能使用markdown支援(右邊會有markdown即時預覽)</p>
-        </div>
-        <div class="col s12">
-          <button class="button-submit" type="button" @click="handleSubmit">
+  <v-container class="main-block">
+    <h1 class="page-title mb-6">建立文章</h1>
+    <v-card class="form-card wow animate__flipInX" color="background">
+      <v-card-text class="pa-8">
+        <v-form @submit.prevent="handleSubmit">
+          <v-text-field
+            v-model="form.title"
+            label="標題"
+            prepend-inner-icon="mdi-format-title"
+            variant="outlined"
+            required
+            class="mb-4"
+            density="comfortable"
+            :rules="titleRules"
+          />
+
+          <v-row>
+            <v-col cols="12" md="6" class="mb-4">
+              <v-text-field
+                v-model="form.username"
+                label="使用者名稱"
+                prepend-inner-icon="mdi-account-circle"
+                variant="outlined"
+                disabled
+                density="comfortable"
+              />
+            </v-col>
+            <v-col cols="12" md="6" class="mb-4">
+              <v-select
+                v-model="form.tags"
+                :items="choiceTag"
+                item-title="name"
+                item-value="name"
+                label="選擇Tag"
+                placeholder="選擇Tag"
+                prepend-inner-icon="mdi-tag-multiple"
+                variant="outlined"
+                density="comfortable"
+                multiple
+                chips
+                closable-chips
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col cols="12" md="6" class="mb-4">
+              <v-textarea
+                v-model="form.content"
+                label="Content"
+                prepend-inner-icon="mdi-pencil"
+                variant="outlined"
+                density="comfortable"
+                rows="10"
+                class="text-insert"
+                auto-grow
+              />
+            </v-col>
+            <v-col cols="12" md="6" class="mb-4">
+              <div class="markdown-preview-label mb-2">
+                <v-icon class="mr-2">mdi-eye</v-icon>
+                Markdown 預覽
+              </div>
+              <div class="markdown-preview" v-html="renderedMarkdown"></div>
+            </v-col>
+          </v-row>
+
+          <div class="hint mb-4">
+            <v-icon size="small" class="mr-2">mdi-information</v-icon>
+            本功能使用markdown支援(右邊會有markdown即時預覽)
+          </div>
+
+          <v-btn color="primary" variant="elevated" size="large" :loading="loading" type="submit" block>
             建立文章
-            <i class="material-icons right">send</i>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+            <v-icon end>mdi-send</v-icon>
+          </v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.row {
-  padding: 50px;
+.form-card {
+  border: 2px solid rgb(var(--v-theme-border));
 }
+
 .hint {
-  color: red;
+  color: rgb(var(--v-theme-error));
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
 }
-.sub-block {
-  min-height: 300px;
-  height: auto;
-}
+
 .text-insert {
-  max-height: 200px;
-  overflow: auto;
+  :deep(.v-field__input) {
+    max-height: 400px;
+    overflow-y: auto;
+  }
 }
+
+.markdown-preview-label {
+  font-weight: 600;
+  color: rgb(var(--v-theme-tagColor));
+  display: flex;
+  align-items: center;
+}
+
 .markdown-preview {
-  max-height: 200px;
-  overflow: auto;
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 8px;
+  padding: 16px;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: rgb(var(--v-theme-background));
+  font-size: 0.875rem;
+  line-height: 1.6;
+
+  :deep(h1),
+  :deep(h2),
+  :deep(h3),
+  :deep(h4),
+  :deep(h5),
+  :deep(h6) {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+  }
+
+  :deep(p) {
+    margin-bottom: 1em;
+  }
+
+  :deep(code) {
+    background-color: var(--v-theme-shadow-light);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: "Courier New", monospace;
+  }
+
+  :deep(pre) {
+    background-color: rgb(var(--v-theme-code-bg));
+    padding: 12px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-bottom: 1em;
+  }
+
+  :deep(pre code) {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  :deep(ul),
+  :deep(ol) {
+    margin-left: 1.5em;
+    margin-bottom: 1em;
+  }
+
+  :deep(blockquote) {
+    border-left: 4px solid rgb(var(--v-theme-primary));
+    padding-left: 1em;
+    margin-left: 0;
+    color: rgb(var(--v-theme-text-tertiary));
+  }
+}
+
+@media (max-width: 768px) {
+  .markdown-preview {
+    max-height: 300px;
+  }
 }
 </style>

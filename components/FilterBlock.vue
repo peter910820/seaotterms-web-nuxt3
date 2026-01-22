@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { userInfoHandler } from "@/utils/userInfoHandler";
 import { messageStorage } from "@/utils/messageHandler";
-
-import { initMaterialDatepicker, initMaterialFormSelect } from "@/composables/useMaterial";
+import { errorHandler } from "@/utils/errorHandler";
 
 import { useTodoTopicStore, useSystemTodoStore } from "@/stores/useTodoStore";
 
@@ -13,6 +12,7 @@ import type { CommonResponse, TodoTopicQueryResponse, SystemTodoQueryResponse } 
 const router = useRouter();
 const todoTopicStore = useTodoTopicStore();
 const systemTodoStore = useSystemTodoStore();
+const filterText = ref<string>("");
 const filterValue = ref<string>("");
 const filterStatus = ref<string>("");
 
@@ -22,6 +22,13 @@ const { data, error } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>,
 
 const todoTopics = computed(() => (data.value?.data ?? []) as TodoTopicQueryResponse[]);
 todoTopicStore.set(todoTopics.value);
+
+const statusOptions = [
+  { label: "未開始", value: "0" },
+  { label: "進行中", value: "1" },
+  { label: "擱置中", value: "2" },
+  { label: "已完成", value: "3" },
+];
 
 const startFilter = async () => {
   try {
@@ -49,86 +56,121 @@ if (import.meta.client && error.value) {
     router.push("/message");
   }
 }
-
-onMounted(() => {
-  // init materializecss
-  initMaterialDatepicker();
-  initMaterialFormSelect();
-});
 </script>
 
 <template>
   <!-- 嵌入其他頁面，所以不用寫main-block -->
-  <div class="col s12 sub-block floatup-div">
-    <div class="row">
-      <div class="col s2">篩選器</div>
-      <div class="col s2">
-        <div class="input-field">
-          <i class="material-icons prefix">text_fields</i>
-          <input id="filterText" type="text" class="validate" />
-          <label for="filterText">篩選文字</label>
-        </div>
-      </div>
-      <div class="col s3">
-        <div class="input-field">
-          <i class="material-icons prefix">apartment</i>
-          <select v-model="filterValue">
-            <option class="validate" value="" disabled selected>請選擇站點</option>
-            <option
-              v-for="systemTodoTopic in todoTopics"
-              :key="systemTodoTopic.topicName"
-              :value="systemTodoTopic.topicName"
-            >
-              {{ systemTodoTopic.topicName }}
-            </option>
-          </select>
-          <label>站點篩選</label>
-        </div>
-      </div>
-      <div class="col s3">
-        <div class="input-field">
-          <i class="material-icons prefix">signal_cellular_alt</i>
-          <select v-model="filterStatus">
-            <option class="validate" value="" disabled selected>選擇狀態</option>
-            <option value="0">未開始</option>
-            <option value="1">進行中</option>
-            <option value="2">擱置中</option>
-            <option value="3">已完成</option>
-          </select>
-          <label>狀態篩選</label>
-        </div>
-      </div>
-      <div class="col s2">
-        <button class="button-submit" type="button" @click="startFilter">
-          篩選
-          <i class="material-icons right">send</i>
-        </button>
-      </div>
-    </div>
-  </div>
+  <v-card class="filter-block wow animate__slideInUp mb-4">
+    <v-card-text class="pa-4">
+      <v-row align="center" no-gutters>
+        <v-col cols="12" sm="1" class="text-center text-sm-left mb-2 mb-sm-0">
+          <span class="filter-label">篩選器</span>
+        </v-col>
+        <v-col cols="12" sm="3" class="mb-2 mb-sm-0 px-1">
+          <v-text-field
+            v-model="filterText"
+            label="篩選文字"
+            prepend-inner-icon="mdi-text-box"
+            variant="outlined"
+            density="compact"
+            hide-details
+          />
+        </v-col>
+        <v-col cols="12" sm="3" class="mb-2 mb-sm-0 px-1">
+          <v-select
+            v-model="filterValue"
+            :items="todoTopics"
+            item-title="topicName"
+            item-value="topicName"
+            label="站點篩選"
+            placeholder="請選擇站點"
+            prepend-inner-icon="mdi-office-building"
+            variant="outlined"
+            density="compact"
+            hide-details
+            clearable
+          />
+        </v-col>
+        <v-col cols="12" sm="3" class="mb-2 mb-sm-0 px-1">
+          <v-select
+            v-model="filterStatus"
+            :items="statusOptions"
+            item-title="label"
+            item-value="value"
+            label="狀態篩選"
+            placeholder="選擇狀態"
+            prepend-inner-icon="mdi-signal-cellular-3"
+            variant="outlined"
+            density="compact"
+            hide-details
+            clearable
+          />
+        </v-col>
+        <v-col cols="12" sm="2" class="text-center px-1">
+          <v-btn color="primary" variant="elevated" @click="startFilter" block>
+            篩選
+            <v-icon end>mdi-send</v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style lang="scss" scoped>
-%filter {
-  display: flex;
-  justify-content: center !important;
-  align-items: center !important;
-  height: 100%;
-}
-
-.sub-block {
-  border: 2px solid var(--color-border);
+.filter-block {
+  border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
-  font-size: 25px !important;
-  max-height: 100px;
-  height: 150px;
+  background-color: rgb(var(--v-theme-background));
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 16px var(--v-theme-shadow-medium);
+  }
 }
 
-.sub-block {
-  .row {
-    height: 100%;
-    .col {
-      @extend %filter;
+.filter-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgb(var(--v-theme-text-secondary));
+}
+
+:deep(.v-text-field),
+:deep(.v-select) {
+  font-size: 0.875rem;
+}
+
+:deep(.v-text-field .v-field),
+:deep(.v-select .v-field) {
+  min-height: 40px;
+  height: 40px;
+}
+
+:deep(.v-text-field .v-field__input),
+:deep(.v-select .v-field__input) {
+  min-height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+:deep(.v-text-field .v-field__field),
+:deep(.v-select .v-field__field) {
+  min-height: 40px;
+}
+
+:deep(.v-btn--variant-elevated) {
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .filter-block {
+    :deep(.v-card-text) {
+      padding: 16px;
     }
   }
 }

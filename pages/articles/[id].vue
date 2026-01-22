@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import dayjs from "dayjs";
 
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
@@ -58,68 +59,100 @@ const renderMarkdown = (content: any) => {
 
 const renderedMarkdown = computed(() => renderMarkdown(article.value.content));
 
+const formatDateTime = (date: string | Date) => {
+  return dayjs(date).format("YYYY-MM-DD HH:mm:ss");
+};
+
 const link = (tagName: string) => {
   router.push(`/tags/${tagName}`);
 };
 </script>
 
 <template>
-  <div class="row banner">
-    <div class="articleTitle">
-      <h1>{{ article.title }}</h1>
-    </div>
-    <div class="articleInformation">
-      <i class="material-icons">account_circle</i>
-      SeaotterMS
-      <i class="material-icons">add_circle</i>
-      {{ article.createdAt }}
-      <i class="material-icons">edit</i>
-      {{ article.updatedAt }}
-    </div>
-    <div class="articleTags">
-      <div
-        class="button-article-tags"
-        role="button"
-        v-for="(tag, index) in article.tags"
-        :key="index"
-        @click="link(tag.name)"
-      >
-        {{ tag.name }}
-      </div>
-    </div>
-  </div>
-  <div class="row content">
-    <div class="markdown-preview col" v-html="renderedMarkdown"></div>
-  </div>
+  <v-container class="article-container">
+    <v-card class="article-banner mb-4">
+      <v-card-title class="article-title text-h4">
+        {{ article.title }}
+      </v-card-title>
+
+      <v-card-text>
+        <div class="d-flex align-center flex-wrap mb-2">
+          <v-icon size="small" class="mr-2">mdi-account-circle</v-icon>
+          <span class="mr-4">SeaotterMS</span>
+          <v-icon size="small" class="mr-2">mdi-calendar-plus</v-icon>
+          <span class="mr-4">{{ formatDateTime(article.createdAt) }}</span>
+          <v-icon size="small" class="mr-2">mdi-pencil</v-icon>
+          <span>{{ formatDateTime(article.updatedAt) }}</span>
+        </div>
+
+        <div class="article-tags">
+          <v-chip
+            v-for="(tag, index) in article.tags"
+            :key="index"
+            class="ma-1"
+            color="tagColor"
+            variant="flat"
+            size="small"
+            @click="link(tag.name)"
+            style="cursor: pointer"
+          >
+            {{ tag.name }}
+          </v-chip>
+        </div>
+      </v-card-text>
+    </v-card>
+
+    <v-card class="article-content">
+      <v-card-text>
+        <div class="markdown-preview" v-html="renderedMarkdown"></div>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <style lang="scss" scoped>
-.row {
-  padding-right: 50px;
-  padding-left: 50px;
+.article-container {
+  padding: 40px;
 }
-.col {
-  max-width: 100%;
+
+.article-banner {
+  min-height: 200px;
+  background-color: rgb(var(--v-theme-background));
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
 }
-.banner {
-  min-height: 300px;
-  > div {
-    padding-bottom: 10px;
-  }
-  > .articleTitle {
-    word-wrap: break-word;
-    color: rebeccapurple;
-  }
+
+.article-title {
+  font-family: "Cubic_11_1.100_R", sans-serif;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  color: rgb(var(--v-theme-tagColor));
+  padding-bottom: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
-.content {
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.article-content {
   min-height: 500px;
   font-family: "jf-openhuninn-2.1";
-  > .col {
-    min-width: 100%;
-    min-height: 500px;
-    border: 2px solid transparent;
-    box-shadow: inset 0 0 10px 1px var(--color-border);
-    border-radius: 20px;
-  }
+  background-color: rgb(var(--v-theme-background));
+  border: 2px solid rgb(var(--v-theme-border));
+  border-radius: 20px;
+}
+
+.markdown-preview {
+  min-height: 500px;
 }
 </style>

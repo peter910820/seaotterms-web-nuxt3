@@ -1,192 +1,265 @@
 <script setup lang="ts">
-import { initMaterialSidenav, initMaterialDropdown } from "@/composables/useMaterial";
+import { useLoginModal } from "@/stores/useLoginModal";
+import { useTheme } from "vuetify";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
+const { showLoginModal, openLoginModal } = useLoginModal();
 
+const theme = useTheme();
 const userData = computed(() => user.value);
+const drawer = ref(false);
+const profileDrawer = ref(false);
 
-onMounted(() => {
-  initMaterialSidenav();
-  initMaterialDropdown();
-});
+const todoMenu = ref(false);
+const galgameMenu = ref(false);
+const otherMenu = ref(false);
+
+const toggleTheme = () => {
+  theme.global.name.value = theme.global.name.value === "darkness-theme" ? "v1-theme" : "darkness-theme";
+};
+
+const handleLogout = () => {
+  const session = useCookie("blog-userinfo-session", {
+    path: "/",
+    maxAge: 0,
+    sameSite: "none",
+    domain: import.meta.env.VITE_ROOT_DOMAIN,
+    secure: true,
+  });
+  session.value = null;
+  userStore.reset();
+  drawer.value = false;
+};
 </script>
 
 <template>
-  <!-- Todo Dropdown Structure -->
-  <ul id="todo-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/todolists">
-        TodoList
-        <i class="material-icons left">checklist</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/create">
-        建立Todo類別
-        <i class="material-icons left">fact_check</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Galgame Dropdown Structure -->
-  <ul id="galgame-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/self-galgames/new">
-        新Galgame紀錄
-        <i class="material-icons left">casino</i>
-      </router-link>
-      <router-link to="/self-galgames">
-        Galgame紀錄
-        <i class="material-icons left">casino</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/operation">
-        Galgame文章作業
-        <i class="material-icons left">description</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Other Dropdown Structure -->
-  <ul id="other-dropdown" class="dropdown-content">
-    <li>
-      <router-link to="/articles/create">
-        建立文章
-        <i class="material-icons left">edit</i>
-      </router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/system/create">
-        建立系統站台
-        <i class="material-icons left">system_update_alt</i>
-      </router-link>
-    </li>
-    <li v-if="userData.id !== undefined && userData.id !== 0">
-      <router-link to="/user-maintain">
-        使用者帳號維護
-        <i class="material-icons left">manage_accounts</i>
-      </router-link>
-    </li>
-  </ul>
-  <!-- Main Navbar -->
-  <nav>
-    <div class="nav-wrapper">
-      <router-link to="/" class="brand-logo">Home</router-link>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <!-- common -->
-      <ul class="right hide-on-med-and-down">
-        <li>
-          <router-link to="/">
-            首頁
-            <i class="material-icons left">home</i>
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/system-todos">
-            系統更新待辦
-            <i class="material-icons left">pending_actions</i>
-          </router-link>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="todo-dropdown">
-            <i class="material-icons left">checklist</i>
+  <v-app-bar color="background" elevation="2" class="navbar" app>
+    <v-app-bar-nav-icon @click="drawer = !drawer" class="d-md-none"></v-app-bar-nav-icon>
+
+    <v-app-bar-title>
+      <NuxtLink to="/" class="brand-link">Home</NuxtLink>
+    </v-app-bar-title>
+
+    <v-spacer></v-spacer>
+
+    <!-- Theme Toggle Button -->
+    <v-btn
+      icon
+      variant="text"
+      @click="toggleTheme"
+      class="theme-toggle-btn"
+      :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+    >
+      <v-icon>{{ theme.global.name.value === "darkness-theme" ? "mdi-weather-sunny" : "mdi-weather-night" }}</v-icon>
+    </v-btn>
+
+    <!-- Desktop Navigation -->
+    <div class="d-none d-md-flex align-center">
+      <v-btn variant="text" to="/" prepend-icon="mdi-home">首頁</v-btn>
+
+      <v-btn variant="text" to="/system-todos" prepend-icon="mdi-calendar-clock">系統更新待辦</v-btn>
+
+      <v-menu v-model="todoMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-check-circle" append-icon="mdi-menu-down">
             Todo
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="galgame-dropdown">
-            <i class="material-icons left">casino</i>
+          </v-btn>
+        </template>
+        <v-list color="background">
+          <v-list-item to="/todolists" prepend-icon="mdi-format-list-checks" title="TodoList"></v-list-item>
+          <v-list-item to="/todo-topics/create" prepend-icon="mdi-tag-plus" title="建立Todo類別"></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu v-model="galgameMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-dice-multiple" append-icon="mdi-menu-down">
             Galgame
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <a class="dropdown-trigger" href="#!" data-target="other-dropdown">
-            <i class="material-icons left">other_houses</i>
+          </v-btn>
+        </template>
+        <v-list color="background">
+          <v-list-item to="/self-galgames" prepend-icon="mdi-dice-multiple" title="Galgame紀錄"></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-menu v-model="otherMenu" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn variant="text" v-bind="props" prepend-icon="mdi-home-group" append-icon="mdi-menu-down">
             其他功能
-            <i class="material-icons right">arrow_drop_down</i>
-          </a>
-        </li>
-        <li>
-          <!-- <router-link to="/register"
-            >註冊<i class="material-icons left">how_to_reg</i></router-link
-          > -->
-        </li>
-        <li>
-          <router-link v-if="userData.username === '' || userData.username === undefined" to="/login">
-            登入
-            <i class="material-icons left">login</i>
-          </router-link>
-          <router-link v-else to="/login">
-            登出
-            <i class="material-icons left">logout</i>
-          </router-link>
-        </li>
-      </ul>
+          </v-btn>
+        </template>
+        <v-list color="background">
+          <v-list-item to="/articles/create" prepend-icon="mdi-pencil" title="建立文章"></v-list-item>
+          <v-list-item to="/todo-topics/system/create" prepend-icon="mdi-server" title="建立系統站台"></v-list-item>
+          <v-list-item
+            v-if="userData.id !== undefined && userData.id !== 0"
+            to="/user-maintain"
+            prepend-icon="mdi-account-cog"
+            title="使用者帳號維護"
+          ></v-list-item>
+        </v-list>
+      </v-menu>
+
+      <v-btn
+        v-if="userData.username === '' || userData.username === undefined"
+        variant="text"
+        prepend-icon="mdi-login"
+        @click.prevent="openLoginModal"
+      >
+        登入
+      </v-btn>
+      <template v-else>
+        <v-btn variant="text" prepend-icon="mdi-account-circle" @click.prevent="profileDrawer = true"> 個人資料 </v-btn>
+        <v-btn variant="text" prepend-icon="mdi-logout" @click.prevent="handleLogout">登出</v-btn>
+      </template>
     </div>
-  </nav>
-  <!-- mobile -->
-  <ul class="sidenav" id="mobile-demo">
-    <li>
-      <router-link to="/">首頁</router-link>
-    </li>
-    <li>
-      <router-link to="/system-todos">系統更新待辦</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/new">新Galgame紀錄</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames">Galgame紀錄</router-link>
-    </li>
-    <li>
-      <router-link to="/self-galgames/operation">Galgame文章作業</router-link>
-    </li>
-    <li>
-      <router-link to="/todolists">TodoList</router-link>
-    </li>
-    <li>
-      <router-link to="/todo-topics/create">建立Todo類別</router-link>
-    </li>
-    <li>
-      <router-link to="/articles/create">建立文章</router-link>
-    </li>
-    <!-- <li>
-      <router-link to="/register">註冊</router-link>
-    </li> -->
-    <li>
-      <router-link v-if="userData.username !== '' && userData.username !== undefined" to="/user-maintain">
-        使用者帳號維護
-      </router-link>
-    </li>
-    <li>
-      <router-link v-if="userData.username === '' || userData.username === undefined" to="/login">登入</router-link>
-      <router-link v-else to="/login">登出</router-link>
-    </li>
-  </ul>
+
+    <LoginModal v-model="showLoginModal" />
+  </v-app-bar>
+
+  <!-- Mobile Navigation Drawer -->
+  <v-navigation-drawer v-model="drawer" temporary location="left" class="mobile-drawer">
+    <v-list>
+      <v-list-item to="/" prepend-icon="mdi-home" title="首頁" @click="drawer = false"></v-list-item>
+      <v-list-item
+        to="/system-todos"
+        prepend-icon="mdi-calendar-clock"
+        title="系統更新待辦"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/self-galgames"
+        prepend-icon="mdi-dice-multiple"
+        title="Galgame紀錄"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/todolists"
+        prepend-icon="mdi-format-list-checks"
+        title="TodoList"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/todo-topics/create"
+        prepend-icon="mdi-tag-plus"
+        title="建立Todo類別"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        to="/articles/create"
+        prepend-icon="mdi-pencil"
+        title="建立文章"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        v-if="userData.username !== '' && userData.username !== undefined"
+        to="/user-maintain"
+        prepend-icon="mdi-account-cog"
+        title="使用者帳號維護"
+        @click="drawer = false"
+      ></v-list-item>
+      <v-list-item
+        v-if="userData.username !== '' && userData.username !== undefined"
+        prepend-icon="mdi-account-circle"
+        title="個人資料"
+        @click="
+          profileDrawer = true;
+          drawer = false;
+        "
+      ></v-list-item>
+      <v-list-item
+        v-if="userData.username === '' || userData.username === undefined"
+        prepend-icon="mdi-login"
+        title="登入"
+        @click="
+          openLoginModal();
+          drawer = false;
+        "
+      ></v-list-item>
+      <v-list-item v-else prepend-icon="mdi-logout" title="登出" @click="handleLogout"></v-list-item>
+      <v-divider class="my-2"></v-divider>
+      <v-list-item
+        :prepend-icon="theme.global.name.value === 'darkness-theme' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+        :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+        @click="toggleTheme"
+      ></v-list-item>
+    </v-list>
+  </v-navigation-drawer>
+
+  <!-- Profile Drawer (from right) -->
+  <v-navigation-drawer v-model="profileDrawer" temporary location="right" width="400" class="profile-drawer" touchable>
+    <template v-slot:prepend>
+      <v-toolbar color="transparent" density="compact">
+        <v-spacer></v-spacer>
+        <v-btn icon variant="text" @click="profileDrawer = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+    </template>
+    <ClientOnly>
+      <MyProfile />
+    </ClientOnly>
+  </v-navigation-drawer>
 </template>
 
 <style lang="scss" scoped>
-.nav-wrapper {
-  background-color: var(--color-background);
+.navbar {
+  background-color: rgb(var(--v-theme-background)) !important;
+  border-bottom: 2px solid rgb(var(--v-theme-border));
 }
 
-.brand-logo {
-  margin-left: 10px;
+.brand-link {
+  text-decoration: none;
+  color: rgb(var(--v-theme-text-primary));
+  font-weight: 600;
+  font-size: 1.25rem;
+
+  &:hover {
+    opacity: 0.8;
+  }
 }
 
-a {
-  color: #444444 !important;
+.mobile-drawer {
+  background-color: rgb(var(--v-theme-background)) !important;
 }
 
-.dropdown-trigger {
-  padding-right: 0px;
+.profile-drawer {
+  background-color: rgb(var(--v-theme-background)) !important;
+
+  // Hide scrollbar but keep scroll functionality
+  :deep(.v-navigation-drawer__content) {
+    overflow-y: auto;
+    scrollbar-width: none; // Firefox
+    -ms-overflow-style: none; // IE and Edge
+
+    &::-webkit-scrollbar {
+      display: none; // Chrome, Safari, Opera
+    }
+  }
 }
 
-.dropdown-content {
-  width: 220px !important;
-  background-color: var(--color-background);
-  border-radius: 10px;
+:deep(.v-list-item) {
+  color: rgb(var(--v-theme-text-secondary));
+}
+
+:deep(.v-overlay__scrim) {
+  pointer-events: auto !important;
+}
+
+:deep(.v-menu .v-overlay__content) {
+  background-color: rgb(var(--v-theme-background));
+}
+
+:deep(.v-menu .v-list) {
+  background-color: rgb(var(--v-theme-background));
+}
+
+:deep(.v-menu .v-list-item) {
+  background-color: rgb(var(--v-theme-background));
+  
+  &:hover {
+    background-color: rgba(var(--v-theme-primary), 0.1);
+  }
 }
 </style>

@@ -7,7 +7,7 @@
 .loader::after {
   content: "";
   grid-area: 1/1;
-  --c: no-repeat radial-gradient(farthest-side, #25b09b 92%, #0000);
+  --c: no-repeat radial-gradient(farthest-side, rgb(var(--v-theme-loader-color)) 92%, #0000);
   background:
     var(--c) 50% 0,
     var(--c) 50% 100%,
@@ -35,7 +35,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #f2ebea;
+  background-color: rgb(var(--v-theme-background));
   z-index: 9999;
   display: flex;
   align-items: center;
