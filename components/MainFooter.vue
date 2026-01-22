@@ -22,12 +22,12 @@
 }
 
 .footer-text {
-  color: #444444;
+  color: rgb(var(--v-theme-text-secondary));
   font-size: 0.875rem;
 }
 
 .footer-link {
-  color: #444444;
+  color: rgb(var(--v-theme-text-secondary));
   text-decoration: none;
   font-size: 0.875rem;
   transition: opacity 0.2s;

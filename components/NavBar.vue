@@ -28,7 +28,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <v-app-bar color="background" elevation="2" class="navbar">
+  <v-app-bar color="background" elevation="2" class="navbar" app>
     <v-app-bar-nav-icon @click="drawer = !drawer" class="d-md-none"></v-app-bar-nav-icon>
 
     <v-app-bar-title>
@@ -194,7 +194,7 @@ const handleLogout = () => {
 
 .brand-link {
   text-decoration: none;
-  color: #000000;
+  color: rgb(var(--v-theme-text-primary));
   font-weight: 600;
   font-size: 1.25rem;
 
@@ -223,7 +223,7 @@ const handleLogout = () => {
 }
 
 :deep(.v-list-item) {
-  color: #444444;
+  color: rgb(var(--v-theme-text-secondary));
 }
 
 :deep(.v-overlay__scrim) {

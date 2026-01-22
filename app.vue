@@ -21,18 +21,18 @@ onMounted(async () => {
     <div id="loader">
       <div class="loader"></div>
     </div>
-    <div class="sticky-navbar">
-      <NavBar />
-    </div>
-    <v-container fluid class="page-container">
-      <v-row class="page-row">
-        <v-col cols="1"></v-col>
-        <v-col cols="10" class="page-content">
-          <NuxtPage />
-        </v-col>
-        <v-col cols="1"></v-col>
-      </v-row>
-    </v-container>
+    <NavBar />
+    <v-main>
+      <v-container fluid class="page-container">
+        <v-row class="page-row">
+          <v-col cols="1"></v-col>
+          <v-col cols="10" class="page-content">
+            <NuxtPage />
+          </v-col>
+          <v-col cols="1"></v-col>
+        </v-row>
+      </v-container>
+    </v-main>
     <!-- <MainFooter /> -->
   </v-app>
 </template>
@@ -49,12 +49,6 @@ body {
 
 .main-block {
   padding: 40px;
-}
-
-.sticky-navbar {
-  position: sticky;
-  top: 0px;
-  z-index: 10;
 }
 
 .loading-hidden {

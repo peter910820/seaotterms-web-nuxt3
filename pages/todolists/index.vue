@@ -75,6 +75,26 @@ if (todosData.value) {
   router.push("/message");
 }
 
+// Check deadline status
+const getDeadlineStatus = (deadline: Date | null | string) => {
+  if (!deadline) return null;
+  const deadlineDate = new Date(deadline);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadlineOnly = new Date(deadlineDate);
+  deadlineOnly.setHours(0, 0, 0, 0);
+  
+  const threeDaysLater = new Date(today);
+  threeDaysLater.setDate(today.getDate() + 3);
+  
+  if (deadlineOnly < today) {
+    return "expired";
+  } else if (deadlineOnly <= threeDaysLater) {
+    return "urgent";
+  }
+  return "normal";
+};
+
 // Create
 const handleSubmit = async () => {
   if (deadlineDate.value) {
@@ -83,8 +103,17 @@ const handleSubmit = async () => {
     form.value.deadline = null;
   }
 
-  if (form.value.topic.trim() === "" || form.value.title.trim() === "") {
-    alert("請確保主題以及標題有正確填寫");
+  // Validate topic and title (must not be empty or only whitespace)
+  const topicTrimmed = form.value.topic.trim();
+  const titleTrimmed = form.value.title.trim();
+  
+  if (!topicTrimmed || topicTrimmed === "") {
+    alert("請確保主題有正確填寫");
+    return;
+  }
+  
+  if (!titleTrimmed || titleTrimmed === "") {
+    alert("請確保標題有正確填寫");
     return;
   }
 
@@ -175,7 +204,7 @@ const deleteTodo = async (id: number) => {
 
     <v-card class="add-block mb-4 wow animate__slideInUp">
       <v-card-text class="pa-4">
-        <v-row align="center" no-gutters>
+        <v-row align="start" no-gutters>
           <v-col cols="12" sm="2" class="mb-2 mb-sm-0 px-1">
             <v-select
               v-model="form.topic"
@@ -187,7 +216,9 @@ const deleteTodo = async (id: number) => {
               prepend-inner-icon="mdi-folder"
               variant="outlined"
               density="compact"
-              hide-details
+              :rules="[(v) => (v && v.trim() !== '') || '此欄不能為空']"
+              required
+              hide-details="auto"
             />
           </v-col>
           <v-col cols="12" sm="5" class="mb-2 mb-sm-0 px-1">
@@ -197,8 +228,9 @@ const deleteTodo = async (id: number) => {
               prepend-inner-icon="mdi-format-title"
               variant="outlined"
               density="compact"
-              hide-details
-              :rules="[(v) => !!v || '此欄不能為空']"
+              :rules="[(v) => (v && v.trim() !== '') || '此欄不能為空']"
+              required
+              hide-details="auto"
             />
           </v-col>
           <v-col cols="12" sm="3" class="mb-2 mb-sm-0 px-1">
@@ -209,7 +241,7 @@ const deleteTodo = async (id: number) => {
               prepend-inner-icon="mdi-calendar"
               variant="outlined"
               density="compact"
-              hide-details
+              hide-details="auto"
             />
           </v-col>
           <v-col cols="12" sm="2" class="text-center px-1">
@@ -232,16 +264,27 @@ const deleteTodo = async (id: number) => {
     <v-card v-for="todo in todos" :key="todo.id" class="todo-card mb-3 floatup-div wow animate__slideInUp">
       <v-card-text class="d-flex align-center pa-3">
         <v-row no-gutters align="center">
-          <!-- Title -->
-          <v-col :cols="todo.deadline ? 5 : 7" class="todo-title"> [{{ todo.topic }}]{{ todo.title }} </v-col>
-
-          <!-- Deadline -->
-          <v-col v-if="todo.deadline" cols="2" class="todo-deadline text-center">
-            {{ new Date(todo.deadline).toISOString().split("T")[0] }}
+          <!-- Title with deadline -->
+          <v-col cols="8" sm="6" class="todo-title-wrapper">
+            <div class="todo-title">
+              <div class="todo-title-text">[{{ todo.topic }}]{{ todo.title }}</div>
+              <div
+                v-if="todo.deadline"
+                :class="[
+                  'todo-deadline-text',
+                  {
+                    'deadline-expired': getDeadlineStatus(todo.deadline) === 'expired',
+                    'deadline-urgent': getDeadlineStatus(todo.deadline) === 'urgent',
+                  },
+                ]"
+              >
+                截止: {{ new Date(todo.deadline).toISOString().split("T")[0] }}
+              </div>
+            </div>
           </v-col>
 
           <!-- Status Buttons -->
-          <v-col :cols="todo.deadline ? 3 : 3" class="todo-button">
+          <v-col cols="2" sm="2" class="todo-button">
             <div class="d-flex gap-1">
               <v-btn
                 :class="['button-status', todo.status == 0 ? 'background-n' : '']"
@@ -282,12 +325,12 @@ const deleteTodo = async (id: number) => {
           </v-col>
 
           <!-- Status Display -->
-          <v-col :cols="todo.deadline ? 2 : 2" class="todo-status text-right">
-            <v-chip v-if="todo.status === 0" color="error" size="small" variant="flat">未開始</v-chip>
-            <v-chip v-else-if="todo.status === 1" color="info" size="small" variant="flat">進行中</v-chip>
-            <v-chip v-else-if="todo.status === 2" color="tagColor" size="small" variant="flat">擱置中</v-chip>
-            <v-chip v-else-if="todo.status === 3" color="success" size="small" variant="flat">已完成</v-chip>
-            <v-chip v-else size="small" variant="flat">?</v-chip>
+          <v-col cols="2" sm="4" class="todo-status text-right">
+            <v-chip v-if="todo.status === 0" color="error" size="default" variant="flat">未開始</v-chip>
+            <v-chip v-else-if="todo.status === 1" color="info" size="default" variant="flat">進行中</v-chip>
+            <v-chip v-else-if="todo.status === 2" color="tagColor" size="default" variant="flat">擱置中</v-chip>
+            <v-chip v-else-if="todo.status === 3" color="success" size="default" variant="flat">已完成</v-chip>
+            <v-chip v-else size="default" variant="flat">?</v-chip>
           </v-col>
         </v-row>
       </v-card-text>
@@ -316,6 +359,14 @@ h1 {
   border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
   background-color: rgb(var(--v-theme-background));
+
+  :deep(.v-field__details) {
+    min-height: 20px;
+  }
+
+  :deep(.v-messages) {
+    min-height: 20px;
+  }
 }
 
 .todo-card {
@@ -331,96 +382,216 @@ h1 {
 
   &:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px var(--v-theme-shadow-medium);
   }
+}
+
+.todo-title-wrapper {
+  position: relative;
 }
 
 .todo-title {
   text-align: left;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-  font-size: 24px !important;
+
+  .todo-title-text {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .todo-deadline-text {
+    font-size: 0.75rem;
+    color: rgb(var(--v-theme-text-olive));
+    margin-top: 2px;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    &.deadline-urgent {
+      color: rgb(var(--v-theme-text-red-rgb));
+      font-weight: 600;
+    }
+
+    &.deadline-expired {
+      color: #000000;
+      font-weight: 600;
+    }
+  }
 }
 
 .todo-button {
   padding: 0;
   text-align: left;
-}
+  padding-right: 4px;
 
-.todo-deadline {
-  text-align: center;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
-  color: #808000;
-  font-size: 24px !important;
+  .d-flex {
+    gap: 2px;
+  }
 }
 
 .todo-status {
   text-align: right;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-left: 4px;
+
+  :deep(.v-chip) {
+    font-size: 1rem;
+    height: 32px;
+    padding: 0 12px;
+  }
 }
 
 .button-status {
-  min-width: 40px !important;
-  width: 40px !important;
-  height: 40px !important;
-  padding: 0 !important;
-  color: white !important;
-  font-weight: bold !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-  background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%) !important;
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-inactive-start)) 0%,
+    rgb(var(--v-theme-button-inactive-end)) 100%
+  );
 
   &:hover {
     transform: scale(1.1);
   }
 }
 
+@media (max-width: 960px) {
+  .button-status {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+}
+
 .background-n {
-  background: linear-gradient(135deg, red 0%, #ff2f13 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-n-start)) 0%,
+    rgb(var(--v-theme-status-n-end)) 100%
+  );
 }
 
 .background-p {
-  background: linear-gradient(135deg, blue 0%, #287be9 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-p-start)) 0%,
+    rgb(var(--v-theme-status-p-end)) 100%
+  );
 }
 
 .background-s {
-  background: linear-gradient(135deg, purple 0%, #9848f3 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-s-start)) 0%,
+    rgb(var(--v-theme-status-s-end)) 100%
+  );
 }
 
 .background-c {
-  background: linear-gradient(135deg, green 0%, #35fc4f 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-c-start)) 0%,
+    rgb(var(--v-theme-status-c-end)) 100%
+  );
 }
 
 .background-d {
-  background: linear-gradient(135deg, black 0%, #222121 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-d-start)) 0%,
+    rgb(var(--v-theme-status-d-end)) 100%
+  );
 
   &:hover {
-    background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--v-theme-status-d-hover-start)) 0%,
+      rgb(var(--v-theme-status-d-hover-end)) 100%
+    );
   }
 }
 
 :deep(.v-btn--variant-elevated.button-submit) {
-  background-color: rgb(var(--v-theme-primary)) !important;
-  color: white !important;
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+}
+
+@media (max-width: 960px) {
+  .todo-title .todo-title-text {
+    font-size: 18px;
+  }
+
+  .todo-title .todo-deadline-text {
+    font-size: 0.7rem;
+  }
+
+  .todo-status {
+    padding-left: 2px;
+  }
+
+  .todo-status :deep(.v-chip) {
+    font-size: 0.9rem;
+    height: 28px;
+    padding: 0 10px;
+  }
+
+  .todo-button {
+    padding-right: 2px;
+  }
+
+  .todo-button .d-flex {
+    gap: 2px;
+  }
 }
 
 @media (max-width: 768px) {
   .todo-card {
-    font-size: 20px;
+    font-size: 18px;
   }
 
-  .todo-title,
-  .todo-deadline,
+  .todo-title .todo-title-text {
+    font-size: 16px;
+  }
+
+  .todo-title .todo-deadline-text {
+    font-size: 0.65rem;
+  }
+
   .todo-status {
-    font-size: 20px !important;
+    font-size: 14px;
+    padding-left: 2px;
   }
 
   .todo-status :deep(.v-chip) {
-    font-size: 16px !important;
+    font-size: 0.8rem;
+    height: 24px;
+    padding: 0 8px;
+  }
+
+  .button-status {
+    min-width: 28px;
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .todo-button {
+    padding-right: 2px;
+  }
+
+  .todo-button .d-flex {
+    gap: 1px;
   }
 
   .hint {

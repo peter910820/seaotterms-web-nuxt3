@@ -129,14 +129,14 @@ if (import.meta.client && error.value) {
 
   &:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px var(--v-theme-shadow-medium);
   }
 }
 
 .filter-label {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #444444;
+  color: rgb(var(--v-theme-text-secondary));
 }
 
 :deep(.v-text-field),
@@ -146,31 +146,31 @@ if (import.meta.client && error.value) {
 
 :deep(.v-text-field .v-field),
 :deep(.v-select .v-field) {
-  min-height: 40px !important;
-  height: 40px !important;
+  min-height: 40px;
+  height: 40px;
 }
 
 :deep(.v-text-field .v-field__input),
 :deep(.v-select .v-field__input) {
-  min-height: 40px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
+  min-height: 40px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 :deep(.v-text-field .v-field__field),
 :deep(.v-select .v-field__field) {
-  min-height: 40px !important;
+  min-height: 40px;
 }
 
 :deep(.v-btn--variant-elevated) {
-  background-color: rgb(var(--v-theme-primary)) !important;
-  color: white !important;
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
 }
 
 @media (max-width: 600px) {
   .filter-block {
     :deep(.v-card-text) {
-      padding: 16px !important;
+      padding: 16px;
     }
   }
 }

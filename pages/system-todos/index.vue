@@ -162,20 +162,20 @@ const deleteTodo = async (id: number) => {
         'urgency-urgent': systemTodo.urgency === 2,
       }"
     >
-      <v-card-text class="d-flex align-center pa-3">
-        <v-row no-gutters align="center">
+      <v-card-text class="pa-3">
+        <v-row no-gutters align="center" class="todo-row">
           <!-- Title -->
-          <v-col :cols="systemTodo.deadline ? 6 : 9" class="todo-title">
+          <v-col cols="6" class="todo-title">
             [{{ systemTodo.systemName }}]{{ systemTodo.title }}
           </v-col>
 
           <!-- Deadline -->
-          <v-col v-if="systemTodo.deadline" cols="3" class="todo-date text-center">
-            {{ new Date(systemTodo.deadline).toISOString().slice(0, 10) }}
+          <v-col cols="3" class="todo-date text-center">
+            <span v-if="systemTodo.deadline">{{ new Date(systemTodo.deadline).toISOString().slice(0, 10) }}</span>
           </v-col>
 
           <!-- Status -->
-          <v-col :cols="systemTodo.deadline ? 2 : 2" class="todo-status text-right">
+          <v-col cols="2" class="todo-status text-right">
             <v-chip v-if="systemTodo.status === 0" color="error" size="small" variant="flat"> 未開始 </v-chip>
             <v-chip v-else-if="systemTodo.status === 1" color="info" size="small" variant="flat"> 進行中 </v-chip>
             <v-chip v-else-if="systemTodo.status === 2" color="tagColor" size="small" variant="flat"> 擱置中 </v-chip>
@@ -184,7 +184,7 @@ const deleteTodo = async (id: number) => {
           </v-col>
 
           <!-- Open Modal Button -->
-          <v-col cols="1" class="text-center">
+          <v-col cols="1" class="text-center button-col">
             <v-btn class="button-open-modal" size="small" variant="flat" @click="openModal(systemTodo.id)">
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -303,35 +303,26 @@ const deleteTodo = async (id: number) => {
 
   &:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 16px var(--v-theme-shadow-medium);
   }
 
   &.urgency-high {
     .todo-title {
-      color: rgb(255, 152, 0); // Orange
+      color: rgb(var(--v-theme-text-orange-rgb));
     }
   }
 
   &.urgency-urgent {
     .todo-title {
-      color: rgb(211, 47, 47); // Red
+      color: rgb(var(--v-theme-text-red-rgb));
     }
   }
 }
 
-@media (max-width: 768px) {
-  .todo-card {
-    font-size: 20px;
-  }
 
-  .todo-title,
-  .todo-date,
-  .todo-status {
-    font-size: 20px !important;
-  }
-
-  .todo-status :deep(.v-chip) {
-    font-size: 16px !important;
+.todo-row {
+  :deep(.v-col) {
+    flex-shrink: 0;
   }
 }
 
@@ -341,7 +332,8 @@ const deleteTodo = async (id: number) => {
   text-overflow: ellipsis;
   overflow: hidden;
   font-weight: 500;
-  font-size: 24px !important;
+  font-size: 24px;
+  min-width: 0;
 }
 
 .todo-date {
@@ -349,21 +341,21 @@ const deleteTodo = async (id: number) => {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: olive;
-  font-size: 24px !important;
+  color: rgb(var(--v-theme-text-olive));
+  font-size: 24px;
 }
 
 .todo-status {
   text-align: right;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: 24px !important;
+  overflow: visible;
+  font-size: 24px;
 
   :deep(.v-chip) {
-    font-size: 18px !important;
-    height: auto !important;
-    padding: 6px 12px !important;
+    font-size: 18px;
+    height: auto;
+    padding: 6px 12px;
   }
 }
 
@@ -383,66 +375,145 @@ h1 {
   font-weight: bold;
 }
 
+@media (max-width: 960px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  .todo-title,
+  .todo-date,
+  .todo-status {
+    font-size: 20px;
+  }
+
+  .todo-status :deep(.v-chip) {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .todo-title,
+  .todo-date,
+  .todo-status {
+    font-size: 18px;
+  }
+
+  .todo-status :deep(.v-chip) {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .todo-title,
+  .todo-date,
+  .todo-status {
+    font-size: 16px;
+  }
+
+  .todo-status :deep(.v-chip) {
+    font-size: 12px;
+  }
+}
+
 h5 {
-  color: #287be9;
+  color: rgb(var(--v-theme-text-blue));
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .orange-text {
-  color: rgb(255, 152, 0) !important;
+  color: rgb(var(--v-theme-text-orange-rgb));
 }
 
 .red-text {
-  color: rgb(211, 47, 47) !important;
+  color: rgb(var(--v-theme-text-red-rgb));
 }
 
 .background-n {
-  background: linear-gradient(to bottom right, red, #ff2f13) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-n-start)),
+    rgb(var(--v-theme-status-n-end))
+  );
+  color: white;
 }
 
 .background-p {
-  background: linear-gradient(to bottom right, blue, #287be9) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-p-start)),
+    rgb(var(--v-theme-status-p-end))
+  );
+  color: white;
 }
 
 .background-s {
-  background: linear-gradient(to bottom right, purple, #9848f3) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-s-start)),
+    rgb(var(--v-theme-status-s-end))
+  );
+  color: white;
 }
 
 .background-c {
-  background: linear-gradient(to bottom right, green, #35fc4f) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-c-start)),
+    rgb(var(--v-theme-status-c-end))
+  );
+  color: white;
 }
 
 .background-e {
-  background: linear-gradient(to bottom right, skyblue, #79e5e9) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-e-start)),
+    rgb(var(--v-theme-status-e-end))
+  );
+  color: white;
 }
 
 .background-d {
-  background: linear-gradient(to bottom right, black, #222121) !important;
-  color: white !important;
+  background: linear-gradient(
+    to bottom right,
+    rgb(var(--v-theme-status-d-start)),
+    rgb(var(--v-theme-status-d-end))
+  );
+  color: white;
 }
 
 /* Open Modal Button (+ button) */
+.button-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .button-open-modal {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-info)) 100%) !important;
-  color: white !important;
-  border-radius: 50% !important;
-  min-width: 40px !important;
-  width: 40px !important;
-  height: 40px !important;
-  padding: 0 !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  transition: all 0.3s ease !important;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-info)) 100%);
+  color: white;
+  border-radius: 50%;
+  min-width: 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  box-shadow: 0 4px 12px var(--v-theme-shadow-medium);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
 
   &:hover {
     transform: scale(1.1) rotate(90deg);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 6px 16px var(--v-theme-shadow-dark);
   }
 
   &:active {
@@ -454,19 +525,32 @@ h5 {
   }
 }
 
+
+@media (max-width: 768px) {
+  .button-open-modal {
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+
+    :deep(.v-icon) {
+      font-size: 20px;
+    }
+  }
+}
+
 /* Dialog Action Buttons */
 .button-action {
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  letter-spacing: 0.5px !important;
-  transition: all 0.3s ease !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-  min-width: 100px !important;
+  border-radius: 8px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px var(--v-theme-shadow-light);
+  min-width: 100px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 4px 12px var(--v-theme-shadow-dark);
   }
 
   &:active {
@@ -475,53 +559,89 @@ h5 {
 }
 
 .button-inactive {
-  background: linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%) !important;
-  color: #424242 !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-inactive-start)) 0%,
+    rgb(var(--v-theme-button-inactive-end)) 100%
+  );
+  color: rgb(var(--v-theme-button-inactive-text));
+  border: 2px solid transparent;
 
   &:hover {
-    background: linear-gradient(135deg, #bdbdbd 0%, #9e9e9e 100%) !important;
-    color: #212121 !important;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--v-theme-button-inactive-hover-start)) 0%,
+      rgb(var(--v-theme-button-inactive-hover-end)) 100%
+    );
+    color: rgb(var(--v-theme-button-inactive-hover-text));
   }
 }
 
 .button-active-n {
-  background: linear-gradient(135deg, #ff4444 0%, #ff6b6b 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-active-n-start)) 0%,
+    rgb(var(--v-theme-button-active-n-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 }
 
 .button-active-p {
-  background: linear-gradient(135deg, #4a90e2 0%, #5ba3f5 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-active-p-start)) 0%,
+    rgb(var(--v-theme-button-active-p-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 }
 
 .button-active-s {
-  background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-active-s-start)) 0%,
+    rgb(var(--v-theme-button-active-s-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 }
 
 .button-active-c {
-  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-active-c-start)) 0%,
+    rgb(var(--v-theme-button-active-c-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 }
 
 .button-edit {
-  background: linear-gradient(135deg, #00bcd4 0%, #4dd0e1 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-button-active-e-start)) 0%,
+    rgb(var(--v-theme-button-active-e-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 }
 
 .button-delete {
-  background: linear-gradient(135deg, #424242 0%, #616161 100%) !important;
-  color: white !important;
-  border: 2px solid transparent !important;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--v-theme-status-d-start)) 0%,
+    rgb(var(--v-theme-status-d-end)) 100%
+  );
+  color: white;
+  border: 2px solid transparent;
 
   &:hover {
-    background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%) !important;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--v-theme-status-d-hover-start)) 0%,
+      rgb(var(--v-theme-status-d-hover-end)) 100%
+    );
   }
 }
 </style>

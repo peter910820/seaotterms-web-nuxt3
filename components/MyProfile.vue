@@ -152,7 +152,7 @@ onMounted(() => {
   word-break: break-word;
   white-space: normal;
   text-align: center;
-  color: #666;
+  color: rgb(var(--v-theme-text-tertiary));
   min-height: 60px;
   padding: 0 16px;
 }
@@ -163,7 +163,7 @@ onMounted(() => {
 }
 
 .project-btn {
-  border-radius: 50px !important;
+  border-radius: 50px;
   font-family: "Cubic_11_1.100_R", sans-serif;
 }
 
@@ -181,7 +181,7 @@ onMounted(() => {
   }
 
   :deep(.v-icon) {
-    margin: 0 !important;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: center;

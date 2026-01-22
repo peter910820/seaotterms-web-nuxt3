@@ -6,6 +6,13 @@ import { errorHandler } from "@/utils/errorHandler";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const Typed: any;
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    WOW: any;
+  }
+}
+
 const router = useRouter();
 
 const { data, error } = await useFetch<CommonResponse<ArticleQueryResponse[]>, CommonResponse>("articles", {
@@ -46,6 +53,12 @@ onMounted(() => {
     loop: true,
     showCursor: false,
   });
+
+  // Initialize WOW.js for scroll animations
+  if (window.WOW) {
+    const wow = new window.WOW();
+    wow.init();
+  }
 });
 </script>
 
@@ -62,7 +75,7 @@ onMounted(() => {
     <v-card
       v-for="article in articles"
       :key="article.id"
-      class="article-card mb-4"
+      class="article-card mb-4 wow animate__slideInUp"
       @click="link('article', article.id.toString())"
     >
       <v-card-title class="article-title">{{ article.title }}</v-card-title>
@@ -123,7 +136,7 @@ onMounted(() => {
   inset: 0;
   border: 2px solid transparent;
   border-radius: 100px;
-  background-color: rgba(240, 248, 255, 0.5);
+  background-color: var(--v-banner-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,7 +163,7 @@ onMounted(() => {
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--v-theme-shadow-light);
   }
 }
 

@@ -188,25 +188,6 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
 </template>
 
 <style lang="scss" scoped>
-.main-block {
-  min-height: 100vh;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.page-title {
-  font-family: "Cubic_11_1.100_R", sans-serif;
-  font-size: 2rem;
-  font-weight: bold;
-  color: rgb(var(--v-theme-tagColor));
-}
-
-.form-card {
-  border: 2px solid rgb(var(--v-theme-border));
-  border-radius: 20px;
-  background-color: rgb(var(--v-theme-background));
-  min-height: 200px;
-}
 
 .hint {
   color: rgb(var(--v-theme-error));
@@ -256,14 +237,14 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
   }
 
   :deep(code) {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--v-theme-shadow-light);
     padding: 2px 4px;
     border-radius: 3px;
     font-family: "Courier New", monospace;
   }
 
   :deep(pre) {
-    background-color: #1e1e1e;
+    background-color: rgb(var(--v-theme-code-bg));
     padding: 12px;
     border-radius: 4px;
     overflow-x: auto;
@@ -285,7 +266,7 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
     border-left: 4px solid rgb(var(--v-theme-primary));
     padding-left: 1em;
     margin-left: 0;
-    color: #666;
+    color: rgb(var(--v-theme-text-tertiary));
   }
 }
 

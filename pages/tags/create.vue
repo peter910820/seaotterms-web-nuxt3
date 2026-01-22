@@ -20,18 +20,15 @@ const formRef = ref();
 const nameRules = [(v: string) => !!v || "此欄不能為空"];
 
 const handleSubmit = async () => {
-  // Prevent duplicate submission
   if (loading.value) {
     return;
   }
 
-  // Validate form before submission
   const { valid } = await formRef.value.validate();
   if (!valid) {
     return;
   }
 
-  // Additional validation check
   if (form.value.name.trim() === "") {
     alert("標題不得為空");
     return;
@@ -93,23 +90,4 @@ const handleSubmit = async () => {
 </template>
 
 <style lang="scss" scoped>
-.main-block {
-  min-height: 100vh;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.page-title {
-  font-family: "Cubic_11_1.100_R", sans-serif;
-  font-size: 2rem;
-  font-weight: bold;
-  color: rgb(var(--v-theme-tagColor));
-}
-
-.form-card {
-  border: 2px solid rgb(var(--v-theme-border));
-  border-radius: 20px;
-  background-color: rgb(var(--v-theme-background));
-  min-height: 200px;
-}
 </style>
