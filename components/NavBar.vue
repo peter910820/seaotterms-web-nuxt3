@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useLoginModal } from "@/stores/useLoginModal";
+import { useTheme } from "vuetify";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const { showLoginModal, openLoginModal } = useLoginModal();
 
+const theme = useTheme();
 const userData = computed(() => user.value);
 const drawer = ref(false);
 const profileDrawer = ref(false);
@@ -12,6 +14,10 @@ const profileDrawer = ref(false);
 const todoMenu = ref(false);
 const galgameMenu = ref(false);
 const otherMenu = ref(false);
+
+const toggleTheme = () => {
+  theme.global.name.value = theme.global.name.value === "darkness-theme" ? "v1-theme" : "darkness-theme";
+};
 
 const handleLogout = () => {
   const session = useCookie("blog-userinfo-session", {
@@ -37,6 +43,17 @@ const handleLogout = () => {
 
     <v-spacer></v-spacer>
 
+    <!-- Theme Toggle Button -->
+    <v-btn
+      icon
+      variant="text"
+      @click="toggleTheme"
+      class="theme-toggle-btn"
+      :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+    >
+      <v-icon>{{ theme.global.name.value === "darkness-theme" ? "mdi-weather-sunny" : "mdi-weather-night" }}</v-icon>
+    </v-btn>
+
     <!-- Desktop Navigation -->
     <div class="d-none d-md-flex align-center">
       <v-btn variant="text" to="/" prepend-icon="mdi-home">首頁</v-btn>
@@ -49,7 +66,7 @@ const handleLogout = () => {
             Todo
           </v-btn>
         </template>
-        <v-list>
+        <v-list color="background">
           <v-list-item to="/todolists" prepend-icon="mdi-format-list-checks" title="TodoList"></v-list-item>
           <v-list-item to="/todo-topics/create" prepend-icon="mdi-tag-plus" title="建立Todo類別"></v-list-item>
         </v-list>
@@ -61,7 +78,7 @@ const handleLogout = () => {
             Galgame
           </v-btn>
         </template>
-        <v-list>
+        <v-list color="background">
           <v-list-item to="/self-galgames" prepend-icon="mdi-dice-multiple" title="Galgame紀錄"></v-list-item>
         </v-list>
       </v-menu>
@@ -72,7 +89,7 @@ const handleLogout = () => {
             其他功能
           </v-btn>
         </template>
-        <v-list>
+        <v-list color="background">
           <v-list-item to="/articles/create" prepend-icon="mdi-pencil" title="建立文章"></v-list-item>
           <v-list-item to="/todo-topics/system/create" prepend-icon="mdi-server" title="建立系統站台"></v-list-item>
           <v-list-item
@@ -109,12 +126,6 @@ const handleLogout = () => {
         to="/system-todos"
         prepend-icon="mdi-calendar-clock"
         title="系統更新待辦"
-        @click="drawer = false"
-      ></v-list-item>
-      <v-list-item
-        to="/self-galgames/new"
-        prepend-icon="mdi-plus-circle"
-        title="新Galgame紀錄"
         @click="drawer = false"
       ></v-list-item>
       <v-list-item
@@ -167,6 +178,12 @@ const handleLogout = () => {
         "
       ></v-list-item>
       <v-list-item v-else prepend-icon="mdi-logout" title="登出" @click="handleLogout"></v-list-item>
+      <v-divider class="my-2"></v-divider>
+      <v-list-item
+        :prepend-icon="theme.global.name.value === 'darkness-theme' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+        :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+        @click="toggleTheme"
+      ></v-list-item>
     </v-list>
   </v-navigation-drawer>
 
@@ -228,5 +245,21 @@ const handleLogout = () => {
 
 :deep(.v-overlay__scrim) {
   pointer-events: auto !important;
+}
+
+:deep(.v-menu .v-overlay__content) {
+  background-color: rgb(var(--v-theme-background));
+}
+
+:deep(.v-menu .v-list) {
+  background-color: rgb(var(--v-theme-background));
+}
+
+:deep(.v-menu .v-list-item) {
+  background-color: rgb(var(--v-theme-background));
+  
+  &:hover {
+    background-color: rgba(var(--v-theme-primary), 0.1);
+  }
 }
 </style>

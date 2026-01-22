@@ -57,7 +57,7 @@ const handleRegisterSubmit = async () => {
 <template>
   <v-container class="main-block">
     <h1 class="page-title mb-6">註冊</h1>
-    <v-card class="form-card wow animate__flipInX">
+    <v-card class="form-card wow animate__flipInX" color="background">
       <v-card-text class="pa-8">
         <v-form @submit.prevent="handleRegisterSubmit">
           <v-text-field
@@ -123,7 +123,6 @@ const handleRegisterSubmit = async () => {
 </template>
 
 <style lang="scss" scoped>
-
 .password-check {
   color: rgb(var(--v-theme-error));
   font-size: 0.875rem;

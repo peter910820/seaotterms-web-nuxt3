@@ -55,7 +55,7 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
   <v-container class="main-block">
     <h1 class="page-title mb-6">海獺的Galgame遊玩紀錄</h1>
 
-    <v-card class="header-card mb-4">
+    <v-card class="header-card mb-4" color="background">
       <v-card-text class="pa-4">
         <v-row align="center" class="galgame-header">
           <v-col cols="12" sm="5" class="text-center font-weight-bold">ゲーム</v-col>
@@ -76,6 +76,7 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
       v-for="game in sortedFlattenedRecordList"
       :key="game.userId"
       class="game-card mb-3 floatup-div wow animate__slideInUp"
+      color="background"
     >
       <v-card-text class="pa-3">
         <v-row align="center" no-gutters>
@@ -102,22 +103,13 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
 </template>
 
 <style lang="scss" scoped>
-.main-block {
-  padding: 40px;
-}
-
 .page-title {
-  font-family: "Cubic_11_1.100_R", sans-serif;
-  font-size: 2rem;
-  font-weight: bold;
-  color: rgb(var(--v-theme-tagColor));
   text-align: center;
 }
 
 .header-card {
   border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
-  background-color: rgb(var(--v-theme-background));
 }
 
 .galgame-header {
@@ -128,7 +120,6 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
 .game-card {
   border: 2px solid rgb(var(--v-theme-border));
   border-radius: 20px;
-  background-color: rgb(var(--v-theme-background));
   transition:
     transform 0.3s ease,
     box-shadow 0.3s ease;
@@ -158,14 +149,6 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
 }
 
 @media (max-width: 768px) {
-  .main-block {
-    padding: 20px;
-  }
-
-  .page-title {
-    font-size: 1.5rem;
-  }
-
   .galgame-header {
     font-size: 1rem;
     min-height: 50px;

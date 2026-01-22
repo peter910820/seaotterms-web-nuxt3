@@ -51,7 +51,6 @@ if (import.meta.client && error.value) {
 const choiceTag = computed(() => data.value?.data ?? []);
 
 const handleSubmit = async () => {
-  // Prevent duplicate submission
   if (loading.value) {
     return;
   }
@@ -107,7 +106,7 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
 <template>
   <v-container class="main-block">
     <h1 class="page-title mb-6">建立文章</h1>
-    <v-card class="form-card wow animate__flipInX">
+    <v-card class="form-card wow animate__flipInX" color="background">
       <v-card-text class="pa-8">
         <v-form @submit.prevent="handleSubmit">
           <v-text-field
@@ -188,6 +187,9 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
 </template>
 
 <style lang="scss" scoped>
+.form-card {
+  border: 2px solid rgb(var(--v-theme-border));
+}
 
 .hint {
   color: rgb(var(--v-theme-error));
@@ -217,7 +219,7 @@ const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
   min-height: 200px;
   max-height: 400px;
   overflow-y: auto;
-  background-color: rgb(var(--v-theme-surface));
+  background-color: rgb(var(--v-theme-background));
   font-size: 0.875rem;
   line-height: 1.6;
 

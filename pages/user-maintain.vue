@@ -107,7 +107,7 @@ const changeManagementStatus = async (userId: number) => {
 <template>
   <v-container class="main-block">
     <h1 class="page-title mb-6">使用者帳號維護</h1>
-    <v-card class="form-card wow animate__flipInX">
+    <v-card class="form-card wow animate__flipInX" color="background">
       <v-card-text class="pa-8">
         <v-row class="mb-4">
           <v-col cols="12" md="6">
@@ -173,7 +173,7 @@ const changeManagementStatus = async (userId: number) => {
 
   <!-- Dialog -->
   <v-dialog v-model="dialog" max-width="90vw" scrollable @click:outside="dialog = false">
-    <v-card class="modal-content">
+    <v-card class="modal-content" color="background">
       <v-card-title class="d-flex align-center justify-space-between">
         <span class="text-h5 modal-title">使用者管理</span>
         <v-btn color="primary" variant="flat" @click="dialog = false">關閉</v-btn>
@@ -254,7 +254,6 @@ const changeManagementStatus = async (userId: number) => {
 
 .modal-content {
   max-height: 75vh;
-  background: rgb(var(--v-theme-background));
 }
 
 .modal-title {

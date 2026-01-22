@@ -29,11 +29,6 @@ const handleSubmit = async () => {
     return;
   }
 
-  if (form.value.name.trim() === "") {
-    alert("標題不得為空");
-    return;
-  }
-
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("tags", {
@@ -56,7 +51,7 @@ const handleSubmit = async () => {
 <template>
   <v-container class="main-block">
     <h1 class="page-title mb-6">建立文章Tag</h1>
-    <v-card class="form-card wow animate__flipInX">
+    <v-card class="form-card wow animate__flipInX" color="background">
       <v-card-text class="pa-8">
         <v-form ref="formRef" @submit.prevent="handleSubmit">
           <v-text-field

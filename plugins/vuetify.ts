@@ -11,9 +11,9 @@ export default defineNuxtPlugin((app) => {
     components,
     directives,
     theme: {
-      defaultTheme: "v1theme",
+      defaultTheme: "v1-theme",
       themes: {
-        v1theme: {
+        "v1-theme": {
           dark: false,
           colors: {
             background: "#F2EBEA",
@@ -102,19 +102,19 @@ export default defineNuxtPlugin((app) => {
             // Note: code-text-bg uses same value as shadow-light, so we use shadow-light instead
           },
         },
-        dark: {
+        "darkness-theme": {
           dark: true,
           colors: {
-            background: "#121212",
-            border: "#2E2E2E",
-            surface: "#1E1E1E",
+            background: "#1a1a2e",
+            border: "#3a3a5c",
+            surface: "#16213e",
             primary: "#F596AA",
-            secondary: "#616161",
+            secondary: "#7a7a9e",
             error: "#FF5252",
-            info: "#2196F3",
-            success: "#4CAF50",
-            warning: "#FB8C00",
-            tagColor: "#BA68C8",
+            info: "#64B5F6",
+            success: "#81C784",
+            warning: "#FFB74D",
+            tagColor: "#CE93D8",
             // Button colors
             "button-submit-bg": "#2d5a3d",
             "button-submit-text": "#81C784",
@@ -157,9 +157,9 @@ export default defineNuxtPlugin((app) => {
             "button-active-e-start": "#4DD0E1",
             "button-active-e-end": "#80DEEA",
             // Text colors
-            "text-primary": "#FFFFFF",
-            "text-secondary": "#E0E0E0",
-            "text-tertiary": "#B0B0B0",
+            "text-primary": "#E8E8F0",
+            "text-secondary": "#C8C8D8",
+            "text-tertiary": "#A0A0B0",
             "text-olive": "#C5D86D",
             "text-orange": "#FFB74D",
             "text-red": "#EF5350",

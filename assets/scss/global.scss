@@ -40,3 +40,8 @@
   background-color: rgb(var(--v-theme-background));
   min-height: 200px;
 }
+
+/* Unified submit button styles */
+.v-btn[type="submit"].v-btn--elevated {
+  border-radius: 12px;
+}

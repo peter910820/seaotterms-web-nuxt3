@@ -77,18 +77,14 @@ const titleRules = [(v: string) => !!v || "此欄不能為空"];
 const systemNameRules = [(v: string) => !!v || "此欄不能為空"];
 
 const handleSubmit = async () => {
-  // Prevent duplicate submission
   if (loading.value) {
     return;
   }
 
-  // Validate form before submission
   const { valid } = await formRef.value.validate();
   if (!valid) {
     return;
   }
-
-  // Process deadline date
   if (deadlineDate.value) {
     const dateStr = deadlineDate.value + "T00:00:00Z";
     const timestamp = Date.parse(dateStr);
@@ -100,12 +96,6 @@ const handleSubmit = async () => {
     form.value.deadline = dateStr;
   } else {
     form.value.deadline = null;
-  }
-
-  // Additional validation check
-  if (form.value.title.trim() === "") {
-    alert("請確保標題有正確填寫");
-    return;
   }
 
   loading.value = true;
@@ -130,7 +120,7 @@ const handleSubmit = async () => {
 <template>
   <v-container class="main-block">
     <h1 class="page-title mb-6">更新系統代辦</h1>
-    <v-card class="form-card wow animate__flipInX">
+    <v-card class="form-card wow animate__flipInX" color="background">
       <v-card-text class="pa-8">
         <v-form ref="formRef" @submit.prevent="handleSubmit">
           <v-row>
