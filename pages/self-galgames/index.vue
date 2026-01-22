@@ -59,9 +59,9 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
       <v-card-text class="pa-4">
         <v-row align="center" class="galgame-header">
           <v-col cols="12" sm="5" class="font-weight-bold">ゲーム</v-col>
-          <v-col cols="12" sm="3" class="font-weight-bold">ブランド</v-col>
-          <v-col cols="12" sm="2" class="font-weight-bold">遊玩結束時間</v-col>
-          <v-col cols="12" sm="2" class="font-weight-bold">批評空間網址</v-col>
+          <v-col cols="12" sm="3" class="text-center font-weight-bold">ブランド</v-col>
+          <v-col cols="12" sm="2" class="text-center font-weight-bold">遊玩結束時間</v-col>
+          <v-col cols="12" sm="2" class="text-center font-weight-bold">批評空間網址</v-col>
         </v-row>
         <v-row align="center" class="galgame-header">
           <v-col cols="12" sm="5"></v-col>
@@ -89,7 +89,7 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
                 : formatDate(game.completedAt)
             }}
           </v-col>
-          <v-col cols="12" sm="2" class="rainbow-text">
+          <v-col cols="12" sm="2" class="text-center rainbow-text">
             <a
               :href="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.gameErogsId}`"
               target="_blank"
