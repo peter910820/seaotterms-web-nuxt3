@@ -32,6 +32,6 @@
     "@types/nprogress": "^0.2.3",
     "vfonts": "^0.0.3",
     "vite-plugin-vuetify": "^2.1.2",
-    "vuetify": "^3.11.2"
+    "vuetify": "3.10.5"
   }
 }
