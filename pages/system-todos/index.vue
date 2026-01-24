@@ -40,11 +40,14 @@ if (import.meta.client && error.value) {
   }
 }
 
-systemTodoStore.$subscribe(() => {
-  nextTick(() => {
-    const wow = new window.WOW();
-    wow.sync();
-    window.dispatchEvent(new Event("scroll"));
+onMounted(() => {
+  systemTodoStore.$subscribe(() => {
+    nextTick(() => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const wow = new (window as any).WOW();
+      wow.sync();
+      window.dispatchEvent(new Event("scroll"));
+    });
   });
 });
 
@@ -165,9 +168,7 @@ const deleteTodo = async (id: number) => {
       <v-card-text class="pa-3">
         <v-row no-gutters align="center" class="todo-row">
           <!-- Title -->
-          <v-col cols="6" class="todo-title">
-            [{{ systemTodo.systemName }}]{{ systemTodo.title }}
-          </v-col>
+          <v-col cols="6" class="todo-title"> [{{ systemTodo.systemName }}]{{ systemTodo.title }} </v-col>
 
           <!-- Deadline -->
           <v-col cols="3" class="todo-date text-center">
@@ -319,7 +320,6 @@ const deleteTodo = async (id: number) => {
   }
 }
 
-
 .todo-row {
   :deep(.v-col) {
     flex-shrink: 0;
@@ -439,56 +439,32 @@ h5 {
 }
 
 .background-n {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-n-start)),
-    rgb(var(--v-theme-status-n-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-n-start)), rgb(var(--v-theme-status-n-end)));
   color: white;
 }
 
 .background-p {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-p-start)),
-    rgb(var(--v-theme-status-p-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-p-start)), rgb(var(--v-theme-status-p-end)));
   color: white;
 }
 
 .background-s {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-s-start)),
-    rgb(var(--v-theme-status-s-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-s-start)), rgb(var(--v-theme-status-s-end)));
   color: white;
 }
 
 .background-c {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-c-start)),
-    rgb(var(--v-theme-status-c-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-c-start)), rgb(var(--v-theme-status-c-end)));
   color: white;
 }
 
 .background-e {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-e-start)),
-    rgb(var(--v-theme-status-e-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-e-start)), rgb(var(--v-theme-status-e-end)));
   color: white;
 }
 
 .background-d {
-  background: linear-gradient(
-    to bottom right,
-    rgb(var(--v-theme-status-d-start)),
-    rgb(var(--v-theme-status-d-end))
-  );
+  background: linear-gradient(to bottom right, rgb(var(--v-theme-status-d-start)), rgb(var(--v-theme-status-d-end)));
   color: white;
 }
 
@@ -524,7 +500,6 @@ h5 {
     font-size: 24px;
   }
 }
-
 
 @media (max-width: 768px) {
   .button-open-modal {
@@ -628,11 +603,7 @@ h5 {
 }
 
 .button-delete {
-  background: linear-gradient(
-    135deg,
-    rgb(var(--v-theme-status-d-start)) 0%,
-    rgb(var(--v-theme-status-d-end)) 100%
-  );
+  background: linear-gradient(135deg, rgb(var(--v-theme-status-d-start)) 0%, rgb(var(--v-theme-status-d-end)) 100%);
   color: white;
   border: 2px solid transparent;
 

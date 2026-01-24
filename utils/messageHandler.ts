@@ -3,6 +3,7 @@ import { errorSet } from "@/utils/error";
 import type { MessageData } from "@/types/common";
 
 export const messageStorage = (code?: number, msg?: string, errCode?: string) => {
+  if (import.meta.server) return;
   // 目前邏輯是，如果有不是API交互產生的錯誤，就會攜帶errCode
   let msgObj: MessageData;
   if (errCode === undefined) {
@@ -28,28 +29,34 @@ export const messageStorage = (code?: number, msg?: string, errCode?: string) =>
     };
   }
 
-  sessionStorage.setItem("msg", JSON.stringify(msgObj));
+  if (typeof window !== "undefined" && window.sessionStorage) {
+    sessionStorage.setItem("msg", JSON.stringify(msgObj));
+  }
 };
 
 export const messageGet = (): MessageData | undefined => {
-  const msg = sessionStorage.getItem("msg");
-  if (msg) {
-    try {
-      const parsed = JSON.parse(msg);
-      if (
-        typeof parsed === "object" &&
-        parsed !== null &&
-        typeof parsed.statusCode === "number" &&
-        typeof parsed.content === "string" &&
-        typeof parsed.errCode === "string"
-      ) {
-        return parsed as MessageData;
+  if (import.meta.server) return undefined;
+
+  if (typeof window !== "undefined" && window.sessionStorage) {
+    const msg = sessionStorage.getItem("msg");
+    if (msg) {
+      try {
+        const parsed = JSON.parse(msg);
+        if (
+          typeof parsed === "object" &&
+          parsed !== null &&
+          typeof parsed.statusCode === "number" &&
+          typeof parsed.content === "string" &&
+          typeof parsed.errCode === "string"
+        ) {
+          return parsed as MessageData;
+        }
+        return undefined;
+      } catch {
+        return undefined;
       }
-      return undefined;
-    } catch {
+    } else {
       return undefined;
     }
-  } else {
-    return undefined;
   }
 };
