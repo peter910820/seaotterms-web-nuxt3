@@ -79,25 +79,26 @@ const handleSubmit = async () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const renderMarkdown = (content: any) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const md: any = MarkdownIt({
-    highlight: function (str, lang) {
-      if (lang && hljs.getLanguage(lang)) {
-        try {
-          return (
-            '<pre><code class="hljs">' +
-            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-            "</code></pre>"
-          );
-        } catch (error) {
-          console.log(error);
-        }
+const md: any = MarkdownIt({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre><code class="hljs">' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          "</code></pre>"
+        );
+      } catch (error) {
+        console.log(error);
       }
+    }
 
-      return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + "</code></pre>";
-    },
-  });
+    return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + "</code></pre>";
+  },
+});
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderMarkdown = (content: any) => {
   return md.render(content);
 };
 const renderedMarkdown = computed(() => renderMarkdown(form.value.content));
