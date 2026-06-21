@@ -1,31 +1,20 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import dayjs from "dayjs";
-import { flattenUserGameErogs } from "@/utils/utils";
 
-import type { CommonResponse, GameRecordQueryResponse, KuroHelperAPIOK, UserGameErogs } from "@/types/response";
-
-import type { UserGameErogsFlat } from "@/types/common";
+import type { CommonResponse, GetUserGameResponse, KuroHelperAPIOK } from "@/types/response";
 
 let total = ref(0);
 
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
-
-const userData = computed(() => user.value);
-
 const router = useRouter();
 
-const { data, error } = await useFetch<KuroHelperAPIOK<UserGameErogs[]>, CommonResponse>(
-  `userdata?id=${import.meta.env.VITE_SELF_DISCORD_ID}`,
-  {
-    baseURL: import.meta.env.VITE_KUROHELPER_API_URL,
-    credentials: "include",
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_KUROHELPER_API_TOKEN}`,
-    },
+const { data, error } = await useFetch<KuroHelperAPIOK<GetUserGameResponse>, CommonResponse>("api/user/1/game", {
+  baseURL: import.meta.env.VITE_KUROHELPER_API_URL,
+  credentials: "include",
+  headers: {
+    Authorization: `Bearer ${import.meta.env.VITE_KUROHELPER_API_TOKEN}`,
   },
-);
+});
 
 if (import.meta.client && error.value) {
   if (error.value.statusCode === 500) {
@@ -37,16 +26,24 @@ if (import.meta.client && error.value) {
   }
 }
 
-const flattenedRecordList: UserGameErogsFlat[] = data.value?.data ? data.value.data.map(flattenUserGameErogs) : [];
+const gameList = (data.value?.data?.games ?? [])
+  .filter((game) => game.status === "finished")
+  .map((game) => ({
+    gameErogsId: game.gameErogsId,
+    completedAt: game.finishedDate ?? null,
+    createdAt: game.createdAt,
+    gameName: game.gameErogs?.name ?? "",
+    brandName: game.gameErogs?.brandErogs?.name ?? "",
+  }));
 
-let sortedFlattenedRecordList = flattenedRecordList.sort((a, b) => {
+let sortedGameList = gameList.sort((a, b) => {
   const aTime = a.completedAt ? new Date(a.completedAt).getTime() : new Date(a.createdAt).getTime();
   const bTime = b.completedAt ? new Date(b.completedAt).getTime() : new Date(b.createdAt).getTime();
 
   return bTime - aTime; // DESC 排序
 });
 
-total.value = sortedFlattenedRecordList.length;
+total.value = sortedGameList.length;
 
 const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
 </script>
@@ -73,8 +70,8 @@ const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
     </v-card>
 
     <v-card
-      v-for="game in sortedFlattenedRecordList"
-      :key="game.userId"
+      v-for="game in sortedGameList"
+      :key="game.gameErogsId"
       class="game-card mb-3 floatup-div wow animate__slideInUp"
       color="background"
     >

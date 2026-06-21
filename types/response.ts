@@ -100,18 +100,6 @@ export interface BrandRecordQueryResponse {
   updateName: string;
 }
 
-export interface GameRecordQueryResponse {
-  name: string;
-  brand: string;
-  releaseDate: string;
-  allAges: boolean;
-  endDate: string;
-  inputTime: string;
-  inputName: string;
-  updateTime: string;
-  updateName: string;
-}
-
 export interface UserQueryResponse {
   id: number;
   username: string;
@@ -127,26 +115,18 @@ export interface KuroHelperAPIOK<T = null> {
   data: T;
 }
 
-interface BrandErogs {
-  id: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
+export interface GetUserGameResponse {
+  games: UserGameResponse[];
 }
 
-interface GameErogs {
-  id: number;
-  brandErogsId: number;
-  name: string;
-  createdAt: string;
-  updatedAt: string;
-  brandErogs: BrandErogs;
-}
-
-export interface UserGameErogs {
-  userId: string;
+export interface UserGameResponse {
+  userId: number;
   gameErogsId: number;
-  completedAt: string | null;
+  status: string;
+  finishedDate?: string | null;
   createdAt: string;
-  gameErogs: GameErogs;
+  gameErogs?: {
+    name: string;
+    brandErogs?: { id: number; name: string };
+  };
 }
