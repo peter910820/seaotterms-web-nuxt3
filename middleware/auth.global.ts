@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (to.path === "/message") return;
   try {
     const response = await $fetch<CommonResponse>("auth", {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });

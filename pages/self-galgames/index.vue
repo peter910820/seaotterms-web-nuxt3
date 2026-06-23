@@ -8,13 +8,7 @@ let total = ref(0);
 
 const router = useRouter();
 
-const { data, error } = await useFetch<KuroHelperAPIOK<GetUserGameResponse>, CommonResponse>("api/user/1/game", {
-  baseURL: import.meta.env.VITE_KUROHELPER_API_URL,
-  credentials: "include",
-  headers: {
-    Authorization: `Bearer ${import.meta.env.VITE_KUROHELPER_API_TOKEN}`,
-  },
-});
+const { data, error } = await useFetch<KuroHelperAPIOK<GetUserGameResponse>, CommonResponse>("/api/user/1/game");
 
 if (import.meta.client && error.value) {
   if (error.value.statusCode === 500) {

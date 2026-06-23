@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 
+const siteUrl = useRuntimeConfig().public.siteUrl as string;
+
+useSeoMeta({
+  ogImage: () => `${siteUrl}background.png`,
+  ogUrl: () => siteUrl,
+});
+
 onMounted(async () => {
   const bar = document.getElementById("loader");
   if (bar) {

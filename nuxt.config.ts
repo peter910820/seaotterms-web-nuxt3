@@ -5,8 +5,17 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
   runtimeConfig: {
+    // runtimeConfig.kurohelperApiUrl   ← NUXT_KUROHELPER_API_URL
+    // runtimeConfig.kurohelperApiToken ← NUXT_KUROHELPER_API_TOKEN
+    kurohelperApiUrl: "",
+    kurohelperApiToken: "",
     public: {
-      API_URL: process.env.NUXT_API_URL,
+      // runtimeConfig.public.apiUrl     ← NUXT_PUBLIC_API_URL
+      // runtimeConfig.public.rootDomain ← NUXT_PUBLIC_ROOT_DOMAIN
+      // runtimeConfig.public.siteUrl    ← NUXT_PUBLIC_SITE_URL
+      apiUrl: "",
+      rootDomain: "",
+      siteUrl: "",
     },
   },
   build: {
@@ -36,8 +45,6 @@ export default defineNuxtConfig({
         { name: "description", content: "放一些技術以及日常的東東" },
         { property: "og:title", content: "SeaotterMSのblog" },
         { property: "og:description", content: "放一些技術以及日常的東東" },
-        { property: "og:image", content: process.env.NUXT_PUBLIC_SITE_URL + "background.png" },
-        { property: "og:url", content: process.env.NUXT_PUBLIC_SITE_URL },
         { property: "og:type", content: "website" },
       ],
       link: [

@@ -9,7 +9,7 @@ const router = useRouter();
 const tagName = route.params.name as string;
 
 const { data, error } = await useFetch<CommonResponse<ArticleQueryResponse[]>, CommonResponse>(`tags/${tagName}`, {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 

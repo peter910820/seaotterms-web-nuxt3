@@ -47,7 +47,7 @@ const todoTopicItems = computed(() => {
 const { data: todoTopicsData, error: todoTopicsError } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>>(
   `todo-topics/${user.value.username}`,
   {
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: useRuntimeConfig().public.apiUrl,
     credentials: "include",
   },
 );
@@ -63,7 +63,7 @@ if (todoTopicsData.value) {
 const { data: todosData, error: todosError } = await useFetch<CommonResponse<TodoQueryResponse[]>>(
   `todos/${user.value.username}`,
   {
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: useRuntimeConfig().public.apiUrl,
     credentials: "include",
   },
 );
@@ -124,7 +124,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse<TodoQueryResponse[]>>(`todos`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "POST",
       credentials: "include",
       body: form.value,
@@ -162,7 +162,7 @@ const changeStatus = async (id: number, status: number) => {
   if (confirm(`確定調整狀態為${statusText}?`)) {
     try {
       const response = await $fetch<CommonResponse<TodoQueryResponse[]>>(`todos/${id}`, {
-        baseURL: import.meta.env.VITE_API_URL,
+        baseURL: useRuntimeConfig().public.apiUrl,
         method: "PATCH",
         credentials: "include",
         body: {
@@ -182,7 +182,7 @@ const deleteTodo = async (id: number) => {
   if (confirm("確定刪除?")) {
     try {
       const response = await $fetch<CommonResponse<TodoQueryResponse[]>>(`todos/${id}`, {
-        baseURL: import.meta.env.VITE_API_URL,
+        baseURL: useRuntimeConfig().public.apiUrl,
         method: "DELETE",
         credentials: "include",
       });

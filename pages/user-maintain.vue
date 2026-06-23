@@ -35,7 +35,7 @@ const dialog = ref(false);
 const changeStatus = async () => {
   try {
     const response = await $fetch<CommonResponse<UserQueryResponse[]>>(`users`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });
@@ -62,7 +62,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>(`users/${form.value.id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "PATCH",
       body: form.value,
       credentials: "include",
@@ -85,7 +85,7 @@ const changeManagementStatus = async (userId: number) => {
         myUser.management = !myUser.management;
         myUser.updateName = user.value.update_name;
         const response = await $fetch<CommonResponse<UserQueryResponse[]>>(`users/${userId}`, {
-          baseURL: import.meta.env.VITE_API_URL,
+          baseURL: useRuntimeConfig().public.apiUrl,
           method: "PATCH",
           body: myUser,
           credentials: "include",
