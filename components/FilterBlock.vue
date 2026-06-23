@@ -17,7 +17,7 @@ const filterValue = ref<string>("");
 const filterStatus = ref<string>("");
 
 const { data, error } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>, CommonResponse>(`todo-topics/system`, {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
 });
 
 const todoTopics = computed(() => (data.value?.data ?? []) as TodoTopicQueryResponse[]);
@@ -35,7 +35,7 @@ const startFilter = async () => {
     const response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(
       `system-todos?system_name=${filterValue.value}&status=${filterStatus.value}`,
       {
-        baseURL: import.meta.env.VITE_API_URL,
+        baseURL: useRuntimeConfig().public.apiUrl,
         method: "GET",
         credentials: "include",
       },

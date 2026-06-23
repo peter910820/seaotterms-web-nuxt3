@@ -24,7 +24,7 @@ const handleLogout = () => {
     path: "/",
     maxAge: 0,
     sameSite: "none",
-    domain: import.meta.env.VITE_ROOT_DOMAIN,
+    domain: useRuntimeConfig().public.rootDomain,
     secure: true,
   });
   session.value = null;

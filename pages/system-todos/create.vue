@@ -28,7 +28,7 @@ const form = ref<SystemTodoCreateRequest>({
 const deadlineDate = ref<string>("");
 
 const { data, error } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>, CommonResponse>("todo-topics/system", {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 
@@ -80,7 +80,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("system-todos", {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "POST",
       body: form.value,
       credentials: "include",

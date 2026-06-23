@@ -22,7 +22,7 @@ const { systemTodo, systemTodoSingle } = storeToRefs(systemTodoStore);
 const modalVisible = ref(false);
 
 const { data, error } = await useFetch<CommonResponse<SystemTodoQueryResponse[]>, CommonResponse>("system-todos", {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 
@@ -58,7 +58,7 @@ const openModal = async (id: number) => {
 
   try {
     const response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos?id=${id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });
@@ -92,7 +92,7 @@ const changeStatus = async (id: number, status: number) => {
   }
   if (confirm(`確定調整狀態為${statusText}?`)) {
     await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos/quick/${id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "PATCH",
       credentials: "include",
       body: {
@@ -101,12 +101,12 @@ const changeStatus = async (id: number, status: number) => {
       },
     });
     let response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos?id=${id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
     });
     systemTodoStore.setSingle(response.data);
     response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });
@@ -124,18 +124,18 @@ const deleteTodo = async (id: number) => {
   if (confirm("確定刪除?")) {
     // 原本沒處理錯誤，之後再調整
     await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos/${id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "DELETE",
       credentials: "include",
     });
     let response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos?id=${id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });
     systemTodoStore.setSingle(response.data);
     response = await $fetch<CommonResponse<SystemTodoQueryResponse[]>>(`system-todos`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "GET",
       credentials: "include",
     });

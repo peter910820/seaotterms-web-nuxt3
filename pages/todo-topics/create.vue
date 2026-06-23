@@ -37,7 +37,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("todo-topics", {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "POST",
       body: form.value,
       credentials: "include",

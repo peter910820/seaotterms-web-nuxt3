@@ -32,7 +32,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("tags", {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "POST",
       body: form.value,
       credentials: "include",

@@ -16,7 +16,7 @@ declare global {
 const router = useRouter();
 
 const { data, error } = await useFetch<CommonResponse<ArticleQueryResponse[]>, CommonResponse>("articles", {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 

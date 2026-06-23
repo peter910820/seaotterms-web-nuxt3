@@ -25,7 +25,7 @@ const systemTodoId = route.params.id as string;
 const { data, error } = await useFetch<CommonResponse<SystemTodoQueryResponse[]>, CommonResponse>(
   `system-todos?id=${systemTodoId}`,
   {
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: useRuntimeConfig().public.apiUrl,
     credentials: "include",
   },
 );
@@ -33,7 +33,7 @@ const { data, error } = await useFetch<CommonResponse<SystemTodoQueryResponse[]>
 const { data: data2, error: error2 } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>, CommonResponse>(
   "todo-topics/system",
   {
-    baseURL: import.meta.env.VITE_API_URL,
+    baseURL: useRuntimeConfig().public.apiUrl,
     credentials: "include",
   },
 );
@@ -101,7 +101,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>(`system-todos/${form.value.id}`, {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "PATCH",
       body: form.value,
       credentials: "include",

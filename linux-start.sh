@@ -1,6 +1,6 @@
-# yarn build
+#!/usr/bin/env bash
+set -a
+source .env
+set +a
 
-export NITRO_PORT=3051
-export NITRO_HOST=127.0.0.1
-
-node .output/server/index.mjs
+nohup node server/index.mjs &

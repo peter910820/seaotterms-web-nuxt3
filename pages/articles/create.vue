@@ -34,7 +34,7 @@ const loading = ref(false);
 const titleRules = [(v: string) => !!v || "此欄不能為空"];
 
 const { data, error } = await useFetch<CommonResponse<TagQueryResponse[]>, CommonResponse>("tags", {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 
@@ -63,7 +63,7 @@ const handleSubmit = async () => {
   loading.value = true;
   try {
     const response = await $fetch<CommonResponse>("articles", {
-      baseURL: import.meta.env.VITE_API_URL,
+      baseURL: useRuntimeConfig().public.apiUrl,
       method: "POST",
       body: form.value,
       credentials: "include",

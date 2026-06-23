@@ -6,7 +6,7 @@ import type { CommonResponse, TagQueryResponse } from "@/types/response";
 const router = useRouter();
 
 const { data, error } = await useFetch<CommonResponse<TagQueryResponse[]>, CommonResponse>("tags", {
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: useRuntimeConfig().public.apiUrl,
   credentials: "include",
 });
 
