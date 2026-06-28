@@ -3,6 +3,7 @@ import { ref } from "vue";
 import dayjs from "dayjs";
 
 import type { CommonResponse, GetUserGameResponse, KuroHelperAPIOK } from "@/types/response";
+import { isUserGameFinished } from "@/utils/userGameStatus";
 
 let total = ref(0);
 
@@ -21,7 +22,7 @@ if (import.meta.client && error.value) {
 }
 
 const gameList = (data.value?.data?.games ?? [])
-  .filter((game) => game.status === "finished")
+  .filter((game) => isUserGameFinished(game.status))
   .map((game) => ({
     gameErogsId: game.gameErogsId,
     completedAt: game.finishedDate ?? null,
