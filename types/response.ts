@@ -122,7 +122,7 @@ export interface GetUserGameResponse {
 export interface UserGameResponse {
   userId: number;
   gameErogsId: number;
-  status: string;
+  status: number;
   finishedDate?: string | null;
   createdAt: string;
   gameErogs?: {
