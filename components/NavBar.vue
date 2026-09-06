@@ -30,7 +30,7 @@ interface NavigationMenu {
 const primaryNavigationItems: NavigationItem[] = [
   { to: "/", icon: "mdi-home", title: "首頁" },
   { to: "/system-todos", icon: "mdi-calendar-clock", title: "系統更新待辦" },
-  { to: "/todolists", icon: "mdi-format-list-checks", title: "TodoList" },
+  { to: "/todos", icon: "mdi-format-list-checks", title: "TodoList" },
   { to: "/self-galgames", icon: "mdi-dice-multiple", title: "Galgame紀錄" },
 ];
 
