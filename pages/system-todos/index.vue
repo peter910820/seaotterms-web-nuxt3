@@ -3,19 +3,85 @@ import { computed, ref } from "vue";
 
 import FilterBlock from "@/components/FilterBlock.vue";
 import { userInfoHandler } from "@/utils/userInfoHandler";
-import { useSystemTodoStore } from "@/stores/useTodoStore";
+import { useSystemTodoStore, useTodoTopicStore } from "@/stores/useTodoStore";
 import { useAppConfirm } from "@/stores/useAppConfirm";
-import type { CommonResponse, SystemTodoQueryResponse } from "@/types/response";
+import { useAppSnackbar } from "@/stores/useAppSnackbar";
+import type { TodoTopicCreateRequest } from "@/types/request";
+import type { CommonResponse, SystemTodoQueryResponse, TodoTopicQueryResponse } from "@/types/response";
 
 const router = useRouter();
 const { confirm } = useAppConfirm();
+const { openSnackbar } = useAppSnackbar();
 const userStore = useUserStore();
 const systemTodoStore = useSystemTodoStore();
+const todoTopicStore = useTodoTopicStore();
 
 const { user } = storeToRefs(userStore);
 const { systemTodo, systemTodoSingle } = storeToRefs(systemTodoStore);
 
 const modalVisible = ref(false);
+const createSiteModalVisible = ref(false);
+const createSiteLoading = ref(false);
+const createSiteFormRef = ref();
+const createSiteForm = ref<TodoTopicCreateRequest>({
+  topicName: "",
+  topicOwner: "system",
+  updatedAt: new Date(),
+  updateName: user.value.username,
+});
+const titleRules = [(v: string) => !!v?.trim() || "標題不得為空"];
+
+const resetCreateSiteForm = () => {
+  createSiteForm.value = {
+    topicName: "",
+    topicOwner: "system",
+    updatedAt: new Date(),
+    updateName: user.value.username,
+  };
+};
+
+const openCreateSiteModal = () => {
+  resetCreateSiteForm();
+  createSiteModalVisible.value = true;
+};
+
+const closeCreateSiteModal = () => {
+  createSiteModalVisible.value = false;
+  resetCreateSiteForm();
+};
+
+const handleCreateSiteSubmit = async () => {
+  const { valid } = await createSiteFormRef.value.validate();
+  if (!valid) return;
+
+  createSiteLoading.value = true;
+  try {
+    const response = await $fetch<CommonResponse>("todo-topics", {
+      baseURL: useRuntimeConfig().public.apiUrl,
+      method: "POST",
+      body: createSiteForm.value,
+      credentials: "include",
+    });
+    userInfoHandler(response.userInfo);
+    try {
+      const topics = await $fetch<CommonResponse<TodoTopicQueryResponse[]>>("todo-topics/system", {
+        baseURL: useRuntimeConfig().public.apiUrl,
+        method: "GET",
+        credentials: "include",
+      });
+      userInfoHandler(topics.userInfo);
+      todoTopicStore.set(topics.data ?? []);
+      openSnackbar("資料創建成功", "success");
+    } catch {
+      openSnackbar("資料創建成功，但站台清單未更新", "warning");
+    }
+    closeCreateSiteModal();
+  } catch (error) {
+    errorHandler(error);
+  } finally {
+    createSiteLoading.value = false;
+  }
+};
 
 const { data, error } = await useFetch<CommonResponse<SystemTodoQueryResponse[]>, CommonResponse>("system-todos", {
   baseURL: useRuntimeConfig().public.apiUrl,
@@ -142,9 +208,10 @@ const deleteTodo = async (id: number) => {
   <v-container class="main-block">
     <div class="d-flex align-center justify-space-between mb-4">
       <h1>系統更新待辦</h1>
-      <v-btn v-if="user?.management === true" :to="'/system-todos/create'" class="button-simple" variant="flat">
-        點我新增
-      </v-btn>
+      <div v-if="user?.management" class="d-flex flex-wrap ga-4">
+        <v-btn class="button-simple" variant="flat" @click="openCreateSiteModal">建立系統站台</v-btn>
+        <v-btn :to="'/system-todos/create'" class="button-simple" variant="flat">點我新增</v-btn>
+      </div>
     </div>
 
     <FilterBlock />
@@ -277,6 +344,33 @@ const deleteTodo = async (id: number) => {
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="primary" variant="flat" @click="closeModal">關閉</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
+  <v-dialog v-model="createSiteModalVisible" max-width="600px">
+    <v-card class="modal-content">
+      <v-card-title class="text-h5">建立系統站台</v-card-title>
+      <v-card-text>
+        <v-form ref="createSiteFormRef" @submit.prevent="handleCreateSiteSubmit">
+          <v-text-field
+            v-model="createSiteForm.topicName"
+            label="Title"
+            prepend-inner-icon="mdi-format-title"
+            variant="outlined"
+            required
+            density="comfortable"
+            :rules="titleRules"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="closeCreateSiteModal">取消</v-btn>
+        <v-btn color="primary" variant="flat" :loading="createSiteLoading" @click="handleCreateSiteSubmit">
+          建立系統站台
+          <v-icon end>mdi-send</v-icon>
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

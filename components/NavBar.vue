@@ -12,7 +12,6 @@ const userData = computed(() => user.value);
 const drawer = ref(false);
 const profileDrawer = ref(false);
 
-const todoMenu = ref(false);
 const otherMenu = ref(false);
 
 interface NavigationItem {
@@ -31,30 +30,22 @@ interface NavigationMenu {
 const primaryNavigationItems: NavigationItem[] = [
   { to: "/", icon: "mdi-home", title: "首頁" },
   { to: "/system-todos", icon: "mdi-calendar-clock", title: "系統更新待辦" },
+  { to: "/todolists", icon: "mdi-format-list-checks", title: "TodoList" },
   { to: "/self-galgames", icon: "mdi-dice-multiple", title: "Galgame紀錄" },
 ];
 
 const navigationMenus = {
-  todo: {
-    name: "Todo",
-    icon: "mdi-check-circle",
-    items: [
-      { to: "/todolists", icon: "mdi-format-list-checks", title: "TodoList" },
-      { to: "/todo-topics/create", icon: "mdi-tag-plus", title: "建立Todo類別" },
-    ],
-  },
   other: {
     name: "其他功能",
     icon: "mdi-home-group",
     items: [
       { to: "/articles/create", icon: "mdi-pencil", title: "建立文章" },
-      { to: "/todo-topics/system/create", icon: "mdi-server", title: "建立系統站台" },
       { to: "/user-maintain", icon: "mdi-account-cog", title: "使用者帳號維護", requiresAuthentication: true },
     ],
   },
 } satisfies Record<string, NavigationMenu>;
 
-const { todo: todoNavigationMenu, other: otherNavigationMenu } = navigationMenus;
+const { other: otherNavigationMenu } = navigationMenus;
 const isAuthenticated = computed(() => userData.value.id !== 0);
 const getVisibleNavigationItems = (items: NavigationItem[]) =>
   items.filter((item) => !item.requiresAuthentication || isAuthenticated.value);
@@ -118,34 +109,6 @@ const handleLogout = () => {
         >
           {{ item.title }}
         </v-btn>
-      </v-sheet>
-
-      <v-sheet class="nav-group" color="surface" border rounded="pill">
-        <v-menu v-model="todoMenu" location="bottom" transition="fade-transition">
-          <template v-slot:activator="{ props }">
-            <v-btn
-              v-bind="props"
-              variant="text"
-              rounded="pill"
-              :ripple="false"
-              :active="isNavigationMenuActive(todoNavigationMenu)"
-              :prepend-icon="todoNavigationMenu.icon"
-              append-icon="mdi-menu-down"
-            >
-              {{ todoNavigationMenu.name }}
-            </v-btn>
-          </template>
-          <v-list bg-color="background" rounded="xl">
-            <v-list-item
-              v-for="item in getVisibleNavigationItems(todoNavigationMenu.items)"
-              :key="item.to"
-              :active="false"
-              :to="item.to"
-              :prepend-icon="item.icon"
-              :title="item.title"
-            ></v-list-item>
-          </v-list>
-        </v-menu>
       </v-sheet>
 
       <v-sheet class="nav-group" color="surface" border rounded="pill">

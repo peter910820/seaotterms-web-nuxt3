@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { userInfoHandler } from "@/utils/userInfoHandler";
 import { messageStorage } from "@/utils/messageHandler";
 import { errorHandler } from "@/utils/errorHandler";
@@ -16,12 +17,16 @@ const filterText = ref<string>("");
 const filterValue = ref<string>("");
 const filterStatus = ref<string>("");
 
-const { data, error } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>, CommonResponse>(`todo-topics/system`, {
-  baseURL: useRuntimeConfig().public.apiUrl,
-});
+const { data, error } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>, CommonResponse>(
+  `todo-topics/system`,
+  {
+    baseURL: useRuntimeConfig().public.apiUrl,
+    credentials: "include",
+  },
+);
 
-const todoTopics = computed(() => (data.value?.data ?? []) as TodoTopicQueryResponse[]);
-todoTopicStore.set(todoTopics.value);
+const { todoTopic: todoTopics } = storeToRefs(todoTopicStore);
+todoTopicStore.set((data.value?.data ?? []) as TodoTopicQueryResponse[]);
 
 const statusOptions = [
   { label: "未開始", value: "0" },

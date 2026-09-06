@@ -1,4 +1,4 @@
-type SnackbarColor = "error" | "warning";
+type SnackbarColor = "error" | "warning" | "success";
 
 export const useAppSnackbar = () => {
   const showSnackbar = useState<boolean>("app-snackbar-visible", () => false);

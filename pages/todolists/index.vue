@@ -8,13 +8,16 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { errorHandler } from "@/utils/errorHandler";
 import { messageStorage } from "@/utils/messageHandler";
+import { userInfoHandler } from "@/utils/userInfoHandler";
 import { useAppConfirm } from "@/stores/useAppConfirm";
+import { useAppSnackbar } from "@/stores/useAppSnackbar";
 
-import type { TodoCreateRequest } from "@/types/request";
+import type { TodoCreateRequest, TodoTopicCreateRequest } from "@/types/request";
 import type { CommonResponse, TodoQueryResponse, TodoTopicQueryResponse } from "@/types/response";
 
 const router = useRouter();
 const { confirm } = useAppConfirm();
+const { openSnackbar } = useAppSnackbar();
 const todoTopicStore = useTodoTopicStore();
 const { todoTopic } = storeToRefs(todoTopicStore);
 const todoStore = useTodoStore();
@@ -37,6 +40,58 @@ const loading = ref(false);
 const formRef = ref();
 const topicRules = [(v: string) => !!v?.trim() || "請確保主題有正確填寫"];
 const titleRules = [(v: string) => !!v?.trim() || "請確保標題有正確填寫"];
+const topicNameRules = [(v: string) => !!v?.trim() || "標題不得為空"];
+const createTopicModalVisible = ref(false);
+const createTopicLoading = ref(false);
+const createTopicFormRef = ref();
+const createTopicForm = ref<TodoTopicCreateRequest>({
+  topicName: "",
+  topicOwner: user.value.username,
+  updatedAt: new Date(),
+  updateName: user.value.username,
+});
+
+const resetCreateTopicForm = () => {
+  createTopicForm.value = {
+    topicName: "",
+    topicOwner: user.value.username,
+    updatedAt: new Date(),
+    updateName: user.value.username,
+  };
+};
+
+const openCreateTopicModal = () => {
+  resetCreateTopicForm();
+  createTopicModalVisible.value = true;
+};
+
+const closeCreateTopicModal = () => {
+  createTopicModalVisible.value = false;
+  resetCreateTopicForm();
+};
+
+const handleCreateTopicSubmit = async () => {
+  const { valid } = await createTopicFormRef.value.validate();
+  if (!valid) return;
+
+  createTopicLoading.value = true;
+  try {
+    const response = await $fetch<CommonResponse>("todo-topics", {
+      baseURL: useRuntimeConfig().public.apiUrl,
+      method: "POST",
+      body: createTopicForm.value,
+      credentials: "include",
+    });
+    userInfoHandler(response.userInfo);
+    await refreshTopics();
+    closeCreateTopicModal();
+    openSnackbar("資料創建成功", "success");
+  } catch (error) {
+    errorHandler(error);
+  } finally {
+    createTopicLoading.value = false;
+  }
+};
 
 const todos = computed(() => todo.value);
 const todoTopics = computed(() => todoTopic.value);
@@ -49,7 +104,11 @@ const todoTopicItems = computed(() => {
 });
 
 // Get todo topics
-const { data: todoTopicsData, error: todoTopicsError } = await useFetch<CommonResponse<TodoTopicQueryResponse[]>>(
+const {
+  data: todoTopicsData,
+  error: todoTopicsError,
+  refresh: refreshTodoTopics,
+} = await useFetch<CommonResponse<TodoTopicQueryResponse[]>>(
   `todo-topics/${user.value.username}`,
   {
     baseURL: useRuntimeConfig().public.apiUrl,
@@ -63,6 +122,11 @@ if (todoTopicsData.value) {
   messageStorage();
   router.push("/message");
 }
+
+const refreshTopics = async () => {
+  await refreshTodoTopics();
+  if (todoTopicsData.value) todoTopicStore.set(todoTopicsData.value.data);
+};
 
 // Get todos
 const { data: todosData, error: todosError } = await useFetch<CommonResponse<TodoQueryResponse[]>>(
@@ -190,6 +254,7 @@ const deleteTodo = async (id: number) => {
   <v-container class="main-block">
     <div class="d-flex align-center justify-space-between mb-4">
       <h1>待辦清單</h1>
+      <v-btn class="button-simple" variant="flat" @click="openCreateTopicModal">建立 Todo 類別</v-btn>
     </div>
 
     <div class="hint mb-4">*按鈕切換狀態>> N: 未開始 P: 進行中 S: 擱置中 C: 已完成 D: 刪除</div>
@@ -334,6 +399,33 @@ const deleteTodo = async (id: number) => {
       </v-card>
     </MotionReveal>
   </v-container>
+
+  <v-dialog v-model="createTopicModalVisible" max-width="600px">
+    <v-card class="modal-content">
+      <v-card-title class="text-h5">建立 Todo 類別</v-card-title>
+      <v-card-text>
+        <v-form ref="createTopicFormRef" @submit.prevent="handleCreateTopicSubmit">
+          <v-text-field
+            v-model="createTopicForm.topicName"
+            label="Title"
+            prepend-inner-icon="mdi-format-title"
+            variant="outlined"
+            required
+            density="comfortable"
+            :rules="topicNameRules"
+          />
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn variant="text" @click="closeCreateTopicModal">取消</v-btn>
+        <v-btn color="primary" variant="flat" :loading="createTopicLoading" @click="handleCreateTopicSubmit">
+          建立主題
+          <v-icon end>mdi-send</v-icon>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style lang="scss" scoped>
@@ -351,6 +443,10 @@ h1 {
 .hint {
   color: rgb(var(--v-theme-error));
   font-size: 1rem;
+}
+
+.modal-content {
+  background: rgb(var(--v-theme-background));
 }
 
 .add-block {
