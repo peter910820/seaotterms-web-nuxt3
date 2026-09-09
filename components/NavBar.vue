@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useLoginModal } from "@/stores/useLoginModal";
-import { useTheme } from "vuetify";
+import { useAppTheme } from "@/composables/useAppTheme";
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
 const { showLoginModal, openLoginModal } = useLoginModal();
 
 const route = useRoute();
-const theme = useTheme();
+const { isDark, toggleTheme } = useAppTheme();
 const userData = computed(() => user.value);
 const drawer = ref(false);
 const profileDrawer = ref(false);
@@ -55,10 +55,6 @@ const mobileNavigationItems = computed(() => [
   ...Object.values(navigationMenus).flatMap((menu) => getVisibleNavigationItems(menu.items)),
 ]);
 
-const toggleTheme = () => {
-  theme.global.name.value = theme.global.name.value === "darkness-theme" ? "v1-theme" : "darkness-theme";
-};
-
 const handleLogout = () => {
   const session = useCookie("blog-userinfo-session", {
     path: "/",
@@ -90,9 +86,9 @@ const handleLogout = () => {
       :ripple="false"
       @click="toggleTheme"
       class="theme-toggle-btn"
-      :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+      :title="isDark ? '切換到淺色主題' : '切換到深色主題'"
     >
-      <v-icon>{{ theme.global.name.value === "darkness-theme" ? "mdi-weather-sunny" : "mdi-weather-night" }}</v-icon>
+      <v-icon>{{ isDark ? "mdi-weather-sunny" : "mdi-weather-night" }}</v-icon>
     </v-btn>
 
     <!-- Desktop Navigation -->
@@ -205,9 +201,9 @@ const handleLogout = () => {
       <v-list-item v-else :ripple="false" prepend-icon="mdi-logout" title="登出" @click="handleLogout"></v-list-item>
       <v-divider class="my-2"></v-divider>
       <v-list-item
-        :prepend-icon="theme.global.name.value === 'darkness-theme' ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+        :prepend-icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
         :ripple="false"
-        :title="theme.global.name.value === 'darkness-theme' ? '切換到淺色主題' : '切換到深色主題'"
+        :title="isDark ? '切換到淺色主題' : '切換到深色主題'"
         @click="toggleTheme"
       ></v-list-item>
     </v-list>
